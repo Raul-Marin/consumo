@@ -414,8 +414,27 @@
       .actions { display: flex; align-items: center; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
       .hint { margin: 0; color: var(--muted); font-size: 14px; }
       .grid { margin-top: var(--stack); display: grid; gap: var(--gap); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+      .chart-block {
+        margin-top: calc(var(--stack) + 10px);
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
+      .chart-switch { display: flex; justify-content: flex-end; gap: 4px; }
+      .chart-switch button {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        font: inherit;
+        font-size: 12px;
+        line-height: 1;
+        padding: 4px 8px;
+        border-radius: 99px;
+        cursor: pointer;
+      }
+      .chart-switch button[aria-pressed="true"] { background: var(--yellow); color: var(--on-accent); }
       .chart {
-        margin-top: var(--stack);
+        margin-top: 10px;
         display: grid;
         grid-auto-flow: column;
         grid-auto-columns: 1fr;
@@ -423,6 +442,9 @@
         align-items: end;
         height: 92px;
       }
+      .chart.days { gap: 3px; }
+      .chart.days .shaft i { width: 100%; max-width: 9px; }
+      .chart.days span { font-size: 10px; }
       .chart .col { display: flex; flex-direction: column; align-items: center; height: 100%; gap: 6px; min-width: 0; }
       .shaft { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
       .shaft i {
@@ -857,6 +879,7 @@
       let refreshSeconds = 30;
       let lastData = null;
       const openFolds = new Set();
+      const chartMode = new Map();
       let scanning = false;
 
       function readSaved() {
@@ -1130,7 +1153,7 @@
             ${head}
             <p class="hero-num">${formatPct(hero.left)}<small>queda ${escapeHtml(LEFT_OF[hero.label] || "en esta ventana")}</small></p>
             <div class="meters"><div class="meter-key">usado</div>${rows}</div>
-            ${renderChart(tool.history?.months)}
+            ${renderChartBlock(tool)}
             <div class="folds">
               ${fold(tool.id, "modelos", "Modelos", total, tool.history?.models)}
               ${fold(tool.id, "proyectos", "Proyectos", total, tool.history?.projects)}
@@ -1139,11 +1162,26 @@
         }).join("");
       }
 
-      function renderChart(months) {
-        if (!months?.length) return "";
-        return `<div class="chart" role="img" aria-label="Consumo por meses">${months.map((month) => `<div class="col${month.current ? " now" : ""}">
-            <div class="shaft" title="${escapeHtml(formatTokens(month.tokens))} tokens"><i style="height:${month.height}%"></i></div>
-            <span>${escapeHtml(month.label)}</span>
+      function renderChartBlock(tool) {
+        const mode = chartMode.get(tool.id) === "days" ? "days" : "months";
+        const slots = mode === "days" ? tool.history?.days : tool.history?.months;
+        const chart = slots?.length
+          ? renderChart(slots, mode)
+          : `<p class="empty-hist">Todavía no hay consumo en este periodo.</p>`;
+        return `<div class="chart-block">
+          <div class="chart-switch" role="group" aria-label="Ver consumo">
+            <button type="button" data-chart="months" aria-pressed="${mode === "months"}">Meses</button>
+            <button type="button" data-chart="days" aria-pressed="${mode === "days"}">Días</button>
+          </div>
+          ${chart}
+        </div>`;
+      }
+
+      function renderChart(slots, mode) {
+        const label = mode === "days" ? "Consumo por días" : "Consumo por meses";
+        return `<div class="chart${mode === "days" ? " days" : ""}" role="img" aria-label="${label}">${slots.map((slot) => `<div class="col${slot.current ? " now" : ""}">
+            <div class="shaft" title="${escapeHtml(slot.hint || slot.label)} · ${escapeHtml(formatTokens(slot.tokens))} tokens"><i style="height:${slot.height}%"></i></div>
+            <span>${escapeHtml(slot.label)}</span>
           </div>`).join("")}</div>`;
       }
 
@@ -1267,6 +1305,15 @@
         if (from < to) card.after(moving);
         else card.before(moving);
         card.classList.remove("over");
+      });
+
+      grid.addEventListener("click", (event) => {
+        const button = event.target.closest?.("[data-chart]");
+        if (!button || !grid.contains(button)) return;
+        const card = button.closest("article[data-id]");
+        if (!card) return;
+        chartMode.set(card.dataset.id, button.dataset.chart);
+        if (lastData) render(lastData);
       });
 
       grid.addEventListener("toggle", (event) => {

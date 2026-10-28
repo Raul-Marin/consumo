@@ -1,5 +1,7 @@
 # Consumo
 
+![Panel Consumo con Cursor, Claude y Codex](docs/cover.png)
+
 Panel local para ver cuánto queda de **Cursor**, **Claude** y **Codex** en el equipo donde lo abres.
 
 No pide API keys. Lee la sesión que ya tienes abierta y consulta cada servicio desde tu máquina. Esta carpeta no guarda claves. El panel solo escucha en `127.0.0.1`: no se publica en internet.
@@ -74,7 +76,7 @@ Cada programa es una tarjeta:
 
 - El número grande es lo que queda del uso principal. En Cursor es el **uso incluido**, no la API. La API va en una barra aparte.
 - **On** está recogiendo datos. **Off** está sin sesión o no se está consultando.
-- La gráfica son los últimos seis meses. La barra del mes actual va en amarillo.
+- La gráfica son los últimos seis meses. **Días** cambia a los últimos catorce. La barra de hoy, o la del mes actual, va en amarillo. Al pasar el cursor se ve el día y los tokens.
 - **Modelos** y **Proyectos** se abren dentro de la tarjeta.
 - Los seis puntos de la izquierda arrastran la tarjeta para cambiar el orden. El orden se recuerda en este navegador.
 - **Actualizar** vuelve a preguntar ahora. Entre medias se refresca solo.

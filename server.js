@@ -122,6 +122,10 @@ function monthKeyFromDate(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
+function dayKeyFromDate(date) {
+  return `${monthKeyFromDate(date)}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 function monthSeries(tokensByKey) {
   const now = new Date();
   const slots = [];
@@ -143,7 +147,27 @@ function monthSeries(tokensByKey) {
   }));
 }
 
-function historyPayload(period, modelsMap, projectsMap, monthsMap = new Map()) {
+function daySeries(tokensByKey, count = 14) {
+  const now = new Date();
+  const slots = [];
+  for (let i = count - 1; i >= 0; i -= 1) {
+    const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    const tokens = Math.round(tokensByKey.get(dayKeyFromDate(date)) || 0);
+    slots.push({
+      label: String(date.getDate()),
+      hint: `${date.getDate()} ${MONTH_LABELS[date.getMonth()]}`,
+      tokens,
+      current: i === 0,
+    });
+  }
+  const max = Math.max(1, ...slots.map((slot) => slot.tokens));
+  return slots.map((slot) => ({
+    ...slot,
+    height: Math.max(slot.tokens ? 12 : 4, Math.round((slot.tokens / max) * 100)),
+  }));
+}
+
+function historyPayload(period, modelsMap, projectsMap, monthsMap = new Map(), daysMap = new Map()) {
   const models = ranked(modelsMap);
   const projects = ranked(projectsMap);
   const tokens = [...modelsMap.values()].reduce((sum, n) => sum + n, 0);
@@ -153,6 +177,7 @@ function historyPayload(period, modelsMap, projectsMap, monthsMap = new Map()) {
     models,
     projects,
     months: monthSeries(monthsMap),
+    days: daySeries(daysMap),
   };
 }
 
@@ -235,16 +260,52 @@ async function cursorHistory(headers, userId, startIso, endIso) {
   } catch {
     // proyectos opcionales
   }
-  const payload = historyPayload(
+  const [months, days] = await Promise.all([
+    cursorMonths(headers, userId),
+    cursorDays(headers, userId),
+  ]);
+  return historyPayload(
     reported > seen ? "Modelos de este ciclo. Proyectos de las sesiones recientes." : "Este ciclo",
     models,
     projects,
-    await cursorMonths(headers, userId),
+    months,
+    days,
   );
-  return payload;
 }
 
 let cursorMonthCache = { at: 0, id: "", map: null };
+let cursorDayCache = { at: 0, id: "", map: null };
+
+function aggregatedTokens(agg) {
+  let tokens = 0;
+  for (const row of agg.aggregations || []) {
+    tokens += Number(row.inputTokens || 0) + Number(row.outputTokens || 0) + Number(row.cacheReadTokens || 0);
+  }
+  return tokens;
+}
+
+async function cursorSpanMap(headers, userId, slots) {
+  const totals = await Promise.all(
+    slots.map(async (slot) => {
+      try {
+        const agg = await fetchJson("https://cursor.com/api/dashboard/get-aggregated-usage-events", {
+          method: "POST",
+          headers: { ...headers, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            teamId: 0,
+            startDate: String(slot.start),
+            endDate: String(Math.min(slot.end, Date.now())),
+            userId,
+          }),
+        });
+        return [slot.key, aggregatedTokens(agg)];
+      } catch {
+        return [slot.key, 0];
+      }
+    }),
+  );
+  return new Map(totals);
+}
 
 function calendarMonths(count) {
   const now = new Date();
@@ -257,37 +318,34 @@ function calendarMonths(count) {
   return slots;
 }
 
+function calendarDays(count) {
+  const now = new Date();
+  const slots = [];
+  for (let i = count - 1; i >= 0; i -= 1) {
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    const end = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 23, 59, 59, 999);
+    slots.push({ key: dayKeyFromDate(start), start: start.getTime(), end: end.getTime() });
+  }
+  return slots;
+}
+
 async function cursorMonths(headers, userId) {
   if (!userId) return new Map();
   if (cursorMonthCache.map && cursorMonthCache.id === userId && Date.now() - cursorMonthCache.at < 10 * 60 * 1000) {
     return cursorMonthCache.map;
   }
-  const totals = await Promise.all(
-    calendarMonths(6).map(async (slot) => {
-      try {
-        const agg = await fetchJson("https://cursor.com/api/dashboard/get-aggregated-usage-events", {
-          method: "POST",
-          headers: { ...headers, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            teamId: 0,
-            startDate: String(slot.start),
-            endDate: String(Math.min(slot.end, Date.now())),
-            userId,
-          }),
-        });
-        let tokens = 0;
-        for (const row of agg.aggregations || []) {
-          tokens +=
-            Number(row.inputTokens || 0) + Number(row.outputTokens || 0) + Number(row.cacheReadTokens || 0);
-        }
-        return [slot.key, tokens];
-      } catch {
-        return [slot.key, 0];
-      }
-    }),
-  );
-  const map = new Map(totals);
+  const map = await cursorSpanMap(headers, userId, calendarMonths(6));
   cursorMonthCache = { at: Date.now(), id: userId, map };
+  return map;
+}
+
+async function cursorDays(headers, userId) {
+  if (!userId) return new Map();
+  if (cursorDayCache.map && cursorDayCache.id === userId && Date.now() - cursorDayCache.at < 10 * 60 * 1000) {
+    return cursorDayCache.map;
+  }
+  const map = await cursorSpanMap(headers, userId, calendarDays(14));
+  cursorDayCache = { at: Date.now(), id: userId, map };
   return map;
 }
 
@@ -295,6 +353,7 @@ function claudeLocalScan() {
   if (claudeProjectCache.map && Date.now() - claudeProjectCache.at < 60_000) return claudeProjectCache;
   const map = new Map();
   const months = new Map();
+  const days = new Map();
   const root = path.join(os.homedir(), ".claude", "projects");
   if (fs.existsSync(root)) {
     for (const dir of fs.readdirSync(root)) {
@@ -326,12 +385,16 @@ function claudeLocalScan() {
             Number(usage.cache_creation_input_tokens || 0);
           bump(map, project, tokens);
           const ts = Date.parse(obj.timestamp);
-          if (Number.isFinite(ts)) bump(months, monthKeyFromDate(new Date(ts)), tokens);
+          if (Number.isFinite(ts)) {
+            const date = new Date(ts);
+            bump(months, monthKeyFromDate(date), tokens);
+            bump(days, dayKeyFromDate(date), tokens);
+          }
         }
       }
     }
   }
-  claudeProjectCache = { at: Date.now(), map, months };
+  claudeProjectCache = { at: Date.now(), map, months, days };
   return claudeProjectCache;
 }
 
@@ -354,44 +417,49 @@ function claudeHistory() {
   }
   let projects = new Map();
   let months = new Map();
+  let days = new Map();
   try {
     const scan = claudeLocalScan();
     projects = scan.map;
     months = scan.months;
+    days = scan.days;
   } catch {
     projects = new Map();
   }
-  return historyPayload("En este equipo", models, projects, months);
+  return historyPayload("En este equipo", models, projects, months, days);
 }
 
 function codexHistory() {
   const models = new Map();
   const projects = new Map();
   const months = new Map();
+  const days = new Map();
   const file = path.join(os.homedir(), ".codex", "sqlite", "state_5.sqlite");
-  if (!fs.existsSync(file)) return historyPayload("Sesiones locales", models, projects, months);
+  if (!fs.existsSync(file)) return historyPayload("Sesiones locales", models, projects, months, days);
   let db;
   try {
     db = new DatabaseSync(file, { readOnly: true });
     const rows = db
       .prepare(
-        `SELECT model, cwd, strftime('%Y-%m', created_at_ms / 1000, 'unixepoch', 'localtime') AS month,
+        `SELECT model, cwd, strftime('%Y-%m-%d', created_at_ms / 1000, 'unixepoch', 'localtime') AS day,
                 SUM(COALESCE(tokens_used, 0)) AS tokens
          FROM threads
-         GROUP BY model, cwd, month`,
+         GROUP BY model, cwd, day`,
       )
       .all();
     for (const row of rows) {
+      const day = String(row.day || "");
       bump(models, prettyModel(row.model), row.tokens);
       bump(projects, projectFromPath(row.cwd), row.tokens);
-      bump(months, row.month, row.tokens);
+      bump(months, day.slice(0, 7), row.tokens);
+      bump(days, day, row.tokens);
     }
   } catch {
     // el cupo semanal sigue visible
   } finally {
     db?.close();
   }
-  return historyPayload("Sesiones locales", models, projects, months);
+  return historyPayload("Sesiones locales", models, projects, months, days);
 }
 
 function round1(n) {
