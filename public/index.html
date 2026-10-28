@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Consumo</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2326251e'/%3E%3Crect x='6' y='20' width='6' height='6' rx='1' fill='%23ffdd00'/%3E%3Crect x='13' y='13' width='6' height='13' rx='1' fill='%23f7f7f7'/%3E%3Crect x='20' y='7' width='6' height='19' rx='1' fill='%23ffdd00'/%3E%3C/svg%3E"
+    />
+    <style>
+      @font-face {
+        font-family: "Gooper SemiBold";
+        src: url("https://framerusercontent.com/assets/DCSKUGHcqx2mRKjOgNRFGWcjkU.woff2") format("woff2");
+        font-weight: 600;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "GT Walsheim Medium";
+        src: url("https://framerusercontent.com/assets/6kEeNyQwxT59TY7SpLEnehG2fc.woff2") format("woff2");
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "GT Walsheim Bold";
+        src: url("https://framerusercontent.com/assets/9yxOMHiOq1YW9lyV4OoKqGTdPeY.woff2") format("woff2");
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+      }
+      :root {
+        --canvas: #f7f7f7;
+        --paper: #ffffff;
+        --ink: #26251e;
+        --body: #5a5852;
+        --muted: #6b6860;
+        --line: #e6e5e0;
+        --line-strong: #cfcdc4;
+        --yellow: #ffdd00;
+        --yellow-deep: #e6c700;
+        --on-accent: #26251e;
+        --ok: #1f8a65;
+        --warn: #a15c12;
+        --bad: #9c3b32;
+        --track: #eceae4;
+        --dot: #bebebe;
+        --font: "GT Walsheim Medium", "Avenir Next", "Segoe UI", sans-serif;
+        --font-bold: "GT Walsheim Bold", "Avenir Next", sans-serif;
+        --display: "Gooper SemiBold", Georgia, serif;
+        --pad-card: 18px;
+        --pad-hero-y: 28px;
+        --pad-hero-x: 28px;
+        --gap: 14px;
+        --radius: 18px;
+        --text: 16px;
+        --title: clamp(40px, 6vw, 64px);
+        --num: 64px;
+        --shell-top: 28px;
+        --stack: 16px;
+        --leading: 1.5;
+        --tracking: -0.03em;
+      }
+      html[data-family="editorial"] {
+        --font: "Iowan Old Style", Palatino, Georgia, serif;
+        --font-bold: "Iowan Old Style", Palatino, Georgia, serif;
+        --display: "Iowan Old Style", Palatino, Georgia, serif;
+      }
+      html[data-family="sistema"] {
+        --font: system-ui, "Segoe UI", sans-serif;
+        --font-bold: system-ui, "Segoe UI", sans-serif;
+        --display: system-ui, "Segoe UI", sans-serif;
+      }
+      html[data-family="mono"] {
+        --font: ui-monospace, "SF Mono", Menlo, monospace;
+        --font-bold: ui-monospace, "SF Mono", Menlo, monospace;
+        --display: ui-monospace, "SF Mono", Menlo, monospace;
+      }
+      html[data-space="compact"] {
+        --pad-card: 12px;
+        --pad-hero-y: 16px;
+        --pad-hero-x: 18px;
+        --gap: 8px;
+        --radius: 12px;
+        --text: 14px;
+        --title: clamp(32px, 5vw, 46px);
+        --num: 46px;
+        --shell-top: 16px;
+        --stack: 10px;
+        --leading: 1.35;
+        --tracking: -0.045em;
+      }
+      html[data-space="ample"] {
+        --pad-card: 24px;
+        --pad-hero-y: 36px;
+        --pad-hero-x: 36px;
+        --gap: 18px;
+        --radius: 22px;
+        --text: 17px;
+        --title: clamp(48px, 7vw, 76px);
+        --num: 76px;
+        --shell-top: 40px;
+        --stack: 22px;
+        --leading: 1.55;
+        --tracking: -0.025em;
+      }
+      html[data-mode="dark"] { color-scheme: dark; }
+      html[data-space="extended"] {
+        --pad-card: 32px;
+        --pad-hero-y: 48px;
+        --pad-hero-x: 44px;
+        --gap: 24px;
+        --radius: 28px;
+        --text: 18px;
+        --title: clamp(56px, 8vw, 92px);
+        --num: 92px;
+        --shell-top: 56px;
+        --stack: 28px;
+        --leading: 1.65;
+        --tracking: -0.02em;
+      }
+      * { box-sizing: border-box; }
+      [hidden] { display: none !important; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        font-family: var(--font);
+        font-size: var(--text);
+        line-height: var(--leading);
+        background-color: var(--canvas);
+        background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+        background-size: 24px 24px;
+      }
+      button, input { font: inherit; }
+      :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+      .shell { width: min(1080px, calc(100% - 40px)); margin: 0 auto; padding: var(--shell-top) 0 calc(var(--shell-top) * 2.2); }
+      .hero {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: var(--pad-hero-y) var(--pad-hero-x) calc(var(--pad-hero-y) - 4px);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 24px;
+      }
+      .eyebrow {
+        margin: 0 0 8px;
+        font-family: var(--display);
+        font-size: 13px;
+        letter-spacing: 0.04em;
+      }
+      .eyebrow span {
+        text-decoration: underline wavy var(--yellow);
+        text-underline-offset: 3px;
+      }
+      h1 {
+        margin: 0;
+        font-family: var(--display);
+        font-size: var(--title);
+        font-weight: 600;
+        line-height: 0.9;
+        letter-spacing: var(--tracking);
+      }
+      .lede { margin: 12px 0 0; max-width: 42ch; color: var(--body); font-size: var(--text); }
+      .tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+      .stamp { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+      button {
+        appearance: none;
+        border: 1px solid var(--ink);
+        background: var(--paper);
+        color: var(--ink);
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-family: var(--font-bold);
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      #dash-tools { display: contents; }
+      button.quiet {
+        border-color: transparent;
+        background: transparent;
+        color: var(--muted);
+        padding: 2px 6px;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        font-family: var(--font);
+        font-weight: 500;
+        font-size: 11px;
+        letter-spacing: 0.03em;
+        line-height: 1;
+      }
+      button.quiet:hover { background: transparent; color: var(--ink); }
+      .nav-ico { width: 20px; height: 20px; display: block; color: var(--ink); }
+      #open-type[aria-expanded="true"] .theme-word,
+      #open-settings[aria-expanded="true"] .theme-word {
+        color: var(--ink);
+        text-decoration: underline wavy var(--yellow);
+        text-underline-offset: 2px;
+      }
+      button:hover { background: var(--canvas); }
+      button:disabled { opacity: 0.55; cursor: progress; }
+      button.primary { background: var(--yellow); border-color: var(--yellow); color: var(--on-accent); }
+      button.primary:hover { background: var(--yellow-deep); color: var(--on-accent); }
+      button.ghost { border-color: transparent; background: transparent; color: var(--body); text-decoration: underline; text-decoration-color: var(--yellow); text-underline-offset: 3px; }
+      .note-box {
+        margin: 16px 0 0;
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        font-size: 15px;
+      }
+      .settings {
+        margin-top: var(--stack);
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: var(--pad-card);
+      }
+      .type-editor {
+        margin-top: var(--stack);
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 14px 16px 12px;
+        display: grid;
+        gap: 12px;
+      }
+      .type-sample { display: flex; align-items: baseline; gap: 14px; min-width: 0; }
+      .type-sample strong {
+        font-family: var(--display);
+        font-size: 32px;
+        font-weight: 600;
+        line-height: 0.9;
+        letter-spacing: var(--tracking);
+      }
+      .type-sample span { color: var(--body); font-size: 14px; }
+      .type-sample em {
+        margin-left: auto;
+        font-style: normal;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        background: var(--yellow);
+        color: var(--on-accent);
+        border-radius: 999px;
+        padding: 4px 8px;
+      }
+      .type-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .type-kicker {
+        width: 72px;
+        flex: none;
+        font-family: var(--font-bold);
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+      .seg button { padding: 6px 10px; font-size: 13px; }
+      .seg button[aria-pressed="true"] { background: var(--yellow); border-color: var(--ink); color: var(--on-accent); }
+      .swatches { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+      .swatch {
+        display: grid;
+        gap: 4px;
+        justify-items: center;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .swatch input {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border: 1.5px solid var(--ink);
+        border-radius: 999px;
+        background: transparent;
+        cursor: pointer;
+      }
+      .swatch input::-webkit-color-swatch-wrapper { padding: 0; }
+      .swatch input::-webkit-color-swatch { border: 0; border-radius: 999px; }
+      .font-pick { position: relative; flex: 1; min-width: 200px; }
+      .type-custom {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 7px 12px;
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .font-list {
+        position: absolute;
+        z-index: 4;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        max-height: 240px;
+        overflow: auto;
+        margin: 0;
+        padding: 6px;
+        list-style: none;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+      }
+      .font-list button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border: 0;
+        background: transparent;
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--ink);
+      }
+      .font-list button[aria-selected="true"],
+      .font-list button:hover { background: var(--canvas); }
+      .settings-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+      .notice {
+        margin: 14px 0 0;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+        font-size: 14px;
+        color: var(--body);
+      }
+      .notice strong { color: var(--ink); font-family: var(--font-bold); font-weight: 700; }
+      .settings-note { margin: 16px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+      .picker { margin-top: var(--stack); display: grid; gap: var(--gap); }
+      .choice {
+        display: grid;
+        grid-template-columns: auto auto 1fr auto;
+        gap: 14px;
+        align-items: center;
+        text-align: left;
+        width: 100%;
+        border-radius: var(--radius);
+        padding: var(--pad-card);
+        background: var(--paper);
+        border: 1px solid var(--line);
+      }
+      .choice[aria-pressed="true"] {
+        border-color: var(--ink);
+      }
+      .choice:hover { border-color: var(--line-strong); }
+      .mark {
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        border: 1.5px solid var(--line-strong);
+        display: grid;
+        place-items: center;
+      }
+      .choice[aria-pressed="true"] .mark { background: var(--yellow); border-color: var(--ink); }
+      .choice[aria-pressed="true"] .mark::after {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 99px;
+        background: var(--on-accent);
+      }
+      .choice strong { display: block; font-family: var(--font-bold); font-weight: 700; font-size: 18px; }
+      .choice small { display: block; margin-top: 2px; color: var(--muted); font-size: 14px; }
+      .choice .help { display: block; margin-top: 6px; color: var(--body); font-size: 14px; max-width: 52ch; }
+      .logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--canvas);
+        color: var(--ink);
+        display: grid;
+        place-items: center;
+        flex: none;
+      }
+      .logo svg { width: 20px; height: 20px; display: block; }
+      .choice .logo { width: 32px; height: 32px; border-radius: 8px; background: var(--canvas); }
+      .choice .logo svg { width: 18px; height: 18px; }
+      .live {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--font-bold);
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .live i {
+        width: 8px;
+        height: 8px;
+        border-radius: 99px;
+        background: var(--line-strong);
+      }
+      .live.on { color: var(--ink); }
+      .live.on i { background: var(--ok); }
+      .live.off i { background: var(--bad); }
+      .looking {
+        margin-top: 18px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px;
+      }
+      .looking p { margin: 0; color: var(--body); }
+      .actions { display: flex; align-items: center; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+      .hint { margin: 0; color: var(--muted); font-size: 14px; }
+      .grid { margin-top: var(--stack); display: grid; gap: var(--gap); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+      .chart {
+        margin-top: var(--stack);
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        gap: 8px;
+        align-items: end;
+        height: 92px;
+      }
+      .chart .col { display: flex; flex-direction: column; align-items: center; height: 100%; gap: 6px; min-width: 0; }
+      .shaft { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
+      .shaft i {
+        display: block;
+        width: 16px;
+        height: 4%;
+        background: var(--ink);
+        border-radius: 5px 5px 2px 2px;
+      }
+      .chart .now i { background: var(--yellow); }
+      .chart span { font-size: 11px; color: var(--muted); line-height: 1; }
+      .folds { margin-top: var(--stack); border-top: 1px solid var(--line); }
+      .fold { border-bottom: 1px solid var(--line); }
+      .fold:last-child { border-bottom: 0; }
+      .fold summary {
+        list-style: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 0 10px;
+        font-family: var(--font-bold);
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .fold summary::-webkit-details-marker { display: none; }
+      .fold summary::after {
+        content: "";
+        width: 7px;
+        height: 7px;
+        margin-left: auto;
+        border-right: 1.5px solid var(--ink);
+        border-bottom: 1.5px solid var(--ink);
+        transform: rotate(45deg) translateY(-2px);
+        flex: none;
+      }
+      .fold[open] summary::after { transform: rotate(-135deg) translateY(-2px); }
+      .fold-meta { margin-left: auto; color: var(--muted); font-family: var(--font); font-size: 13px; font-weight: 500; }
+      .fold .list-row:last-child,
+      .fold .empty-hist { margin-bottom: 12px; }
+      article {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: var(--pad-card);
+      }
+      article.dragging { opacity: 0.4; }
+      article.over { border-color: var(--ink); }
+      .handle {
+        width: 16px;
+        height: 28px;
+        flex: none;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        cursor: grab;
+        touch-action: none;
+      }
+      .handle:hover { color: var(--ink); }
+      .handle:active { cursor: grabbing; }
+      .handle svg { width: 10px; height: 16px; display: block; }
+      .sk {
+        display: block;
+        border-radius: 8px;
+        background: linear-gradient(90deg, var(--track) 0%, var(--paper) 42%, var(--track) 84%);
+        background-size: 220% 100%;
+        animation: shimmer 1.15s cubic-bezier(0.32, 0.72, 0, 1) infinite;
+      }
+      @keyframes shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+      .sk-top { display: flex; align-items: center; gap: 10px; }
+      .sk-logo { width: 36px; height: 36px; border-radius: 10px; flex: none; }
+      .sk-name { width: 92px; height: 14px; }
+      .sk-pill { width: 52px; height: 18px; margin-left: auto; border-radius: 99px; }
+      .sk-num { width: 132px; height: 52px; margin-top: 22px; border-radius: 10px; }
+      .sk-line { height: 8px; margin-top: 16px; }
+      .sk-line.short { width: 72%; }
+      .sk-chart { display: flex; align-items: flex-end; gap: 8px; height: 72px; margin-top: 22px; }
+      .sk-bar { flex: 1; border-radius: 5px 5px 2px 2px; }
+      .sk-fold { height: 12px; width: 46%; margin-top: 18px; }
+      @media (prefers-reduced-motion: reduce) {
+        .sk { animation: none; }
+      }
+      .list-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1.3fr) minmax(80px, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        margin-top: 12px;
+        font-size: 15px;
+      }
+      .list-row span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .list-row .bar { height: 8px; }
+      .list-row .bar i { background: var(--ink); }
+      .list-meta { font-variant-numeric: tabular-nums; color: var(--body); font-size: 13px; white-space: nowrap; }
+      .empty-hist { margin: 16px 0 0; color: var(--muted); font-size: 14px; }
+      .card-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+      .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+      .card-side { display: flex; align-items: center; gap: 8px; flex: none; }
+      .name { font-family: var(--font-bold); font-weight: 700; font-size: 18px; }
+      .plan {
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        background: var(--yellow);
+        color: var(--on-accent);
+        border-radius: 999px;
+        padding: 4px 8px;
+      }
+      .hero-num {
+        margin: var(--stack) 0 0;
+        font-family: var(--display);
+        font-size: var(--num);
+        line-height: 0.9;
+        letter-spacing: var(--tracking);
+      }
+      .hero-num small {
+        display: block;
+        margin-top: 8px;
+        font-family: var(--font);
+        font-size: 14px;
+        letter-spacing: 0;
+        color: var(--muted);
+      }
+      .meters { margin-top: var(--stack); display: grid; gap: calc(var(--stack) * 0.75); }
+      .meter { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+      .meter span:first-child { width: 108px; flex: none; color: var(--muted); }
+      .bar { flex: 1; height: 8px; background: var(--track); border-radius: 99px; overflow: hidden; }
+      .bar i { display: block; height: 100%; width: 0; background: var(--ink); border-radius: inherit; }
+      .bar.bad i { background: var(--bad); }
+      .bar.warn i { background: #e0a100; }
+      .bar.ok i { background: var(--ok); }
+      .pct { width: 52px; text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-bold); font-weight: 700; }
+      .meter-key { justify-content: flex-end; color: var(--muted); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+      .meter-key span { width: auto; }
+      .note, .detail, .source, .error { margin: 14px 0 0; font-size: 14px; line-height: 1.45; color: var(--body); }
+      .detail { color: var(--bad); }
+      .error { font-size: 15px; margin-top: 22px; color: var(--ink); }
+      footer { margin-top: 28px; }
+      footer a {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        line-height: 1;
+      }
+      footer a:hover { color: var(--ink); }
+      footer svg { width: 12px; height: auto; display: block; color: var(--ink); }
+      code { font-family: ui-monospace, monospace; font-size: 12px; }
+      @media (max-width: 860px) {
+        .hero { display: grid; grid-template-columns: 1fr; }
+        .tools { justify-content: flex-start; }
+        .shell { width: min(100% - 28px, 1080px); }
+      }
+    </style>
+    <script>
+      (function () {
+        var KEY = "consumo-tipo";
+        var FAMILIES = ["actual", "editorial", "sistema", "mono", "custom"];
+        var SPACES = ["compact", "normal", "ample", "extended"];
+        var DEFAULTS = { family: "actual", custom: "", space: "normal", canvas: "#f7f7f7", paper: "#ffffff", ink: "#26251e", accent: "#ffdd00" };
+        function safeFamily(value) {
+          return String(value || "").replace(/[^a-zA-Z0-9 ,\-]/g, "").slice(0, 80).trim();
+        }
+        function fontStack(custom) {
+          if (custom.indexOf(",") >= 0) return custom;
+          return '"' + custom + '", sans-serif';
+        }
+        function loadGoogleFont(name) {
+          var link = document.getElementById("consumo-gf");
+          if (!name || name.indexOf(",") >= 0) {
+            if (link) link.remove();
+            return;
+          }
+          var family = encodeURIComponent(name).replace(/%20/g, "+");
+          var href = "https://fonts.googleapis.com/css2?family=" + family + "&display=swap";
+          if (link && link.getAttribute("href") === href) return;
+          if (!link) {
+            link = document.createElement("link");
+            link.id = "consumo-gf";
+            link.rel = "stylesheet";
+            document.head.appendChild(link);
+          }
+          link.href = href;
+        }
+        function hex(value, fallback) {
+          return /^#[0-9a-fA-F]{6}$/.test(value || "") ? String(value).toLowerCase() : fallback;
+        }
+        function readRaw() {
+          try { return JSON.parse(localStorage.getItem(KEY) || "null"); }
+          catch (e) { return null; }
+        }
+        function apply(theme) {
+          var root = document.documentElement;
+          var family = FAMILIES.indexOf(theme.family) >= 0 ? theme.family : "actual";
+          var space = SPACES.indexOf(theme.space) >= 0 ? theme.space : "normal";
+          var custom = safeFamily(theme.custom);
+          if (family === "custom" && !custom) family = "actual";
+          root.dataset.family = family;
+          root.dataset.space = space;
+          ["--font", "--font-bold", "--display"].forEach(function (name) { root.style.removeProperty(name); });
+          if (family === "custom") {
+            loadGoogleFont(custom);
+            var stack = fontStack(custom);
+            root.style.setProperty("--font", stack);
+            root.style.setProperty("--font-bold", stack);
+            root.style.setProperty("--display", stack);
+          } else {
+            loadGoogleFont("");
+          }
+          var canvas = hex(theme.canvas, DEFAULTS.canvas);
+          var paper = hex(theme.paper, DEFAULTS.paper);
+          var ink = hex(theme.ink, DEFAULTS.ink);
+          var accent = hex(theme.accent, DEFAULTS.accent);
+          var inkNum = parseInt(ink.slice(1), 16);
+          var luma = ((inkNum >> 16) & 255) * 299 + ((inkNum >> 8) & 255) * 587 + (inkNum & 255) * 114;
+          var dark = luma / 1000 > 160;
+          root.dataset.mode = dark ? "dark" : "light";
+          var stock = canvas === DEFAULTS.canvas && paper === DEFAULTS.paper && ink === DEFAULTS.ink && accent === DEFAULTS.accent;
+          ["--canvas", "--paper", "--ink", "--yellow", "--yellow-deep", "--body", "--muted", "--line", "--line-strong", "--track", "--dot"].forEach(function (name) {
+            root.style.removeProperty(name);
+          });
+          if (!stock) {
+            root.style.setProperty("--canvas", canvas);
+            root.style.setProperty("--paper", paper);
+            root.style.setProperty("--ink", ink);
+            root.style.setProperty("--yellow", accent);
+            root.style.setProperty("--yellow-deep", "color-mix(in srgb, " + accent + " 78%, #3a3200)");
+            root.style.setProperty("--body", "color-mix(in srgb, " + ink + " 72%, " + canvas + ")");
+            root.style.setProperty("--muted", "color-mix(in srgb, " + ink + " 55%, " + canvas + ")");
+            root.style.setProperty("--line", "color-mix(in srgb, " + ink + " " + (dark ? "22%" : "14%") + ", " + paper + ")");
+            root.style.setProperty("--line-strong", "color-mix(in srgb, " + ink + " " + (dark ? "40%" : "28%") + ", " + paper + ")");
+            root.style.setProperty("--track", "color-mix(in srgb, " + ink + " 10%, " + paper + ")");
+            root.style.setProperty("--dot", "color-mix(in srgb, " + ink + " 32%, " + canvas + ")");
+          }
+          return { family: family, custom: family === "custom" ? custom : "", space: space, canvas: canvas, paper: paper, ink: ink, accent: accent };
+        }
+        window.consumoType = {
+          defaults: DEFAULTS,
+          modes: {
+            light: { canvas: "#f7f7f7", paper: "#ffffff", ink: "#26251e", accent: "#ffdd00" },
+            dark: { canvas: "#141413", paper: "#1e1e1b", ink: "#f4f3ee", accent: "#ffdd00" }
+          },
+          read: function () { return apply(Object.assign({}, DEFAULTS, readRaw() || {})); },
+          write: function (theme) {
+            var next = apply(theme);
+            localStorage.setItem(KEY, JSON.stringify(next));
+            return next;
+          },
+          reset: function () {
+            localStorage.removeItem(KEY);
+            return apply(DEFAULTS);
+          }
+        };
+        if (readRaw()) apply(Object.assign({}, DEFAULTS, readRaw()));
+      })();
+    </script>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow"><span id="eyebrow">en este equipo</span></p>
+          <h1 id="title">Consumo</h1>
+          <p class="lede" id="lede">Cuánto queda de las suscripciones que elijas. Las demás no se consultan.</p>
+        </div>
+        <div class="tools">
+          <button class="quiet" id="open-type" type="button" aria-expanded="false" aria-controls="type-editor">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+              <circle cx="13.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+              <circle cx="17.5" cy="10.5" r="1" fill="currentColor" stroke="none"/>
+              <circle cx="8.5" cy="7.5" r="1" fill="currentColor" stroke="none"/>
+              <circle cx="6.5" cy="12.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+            <span class="theme-word">theme</span>
+          </button>
+          <div id="dash-tools" hidden>
+            <button class="quiet" id="open-settings" type="button" aria-expanded="false" aria-controls="settings">
+              <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <span class="theme-word">ajustes</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <section class="type-editor" id="type-editor" hidden>
+        <div class="type-sample" aria-hidden="true">
+          <strong>Aa</strong>
+          <span>Cuánto queda este mes</span>
+          <em>Plan</em>
+        </div>
+        <div class="type-row">
+          <span class="type-kicker" id="family-label">Familia</span>
+          <div class="seg" role="group" aria-labelledby="family-label">
+            <button type="button" data-family="actual" aria-pressed="true">Actual</button>
+            <button type="button" data-family="editorial" aria-pressed="false">Editorial</button>
+            <button type="button" data-family="sistema" aria-pressed="false">Sistema</button>
+            <button type="button" data-family="mono" aria-pressed="false">Mono</button>
+          </div>
+          <div class="font-pick">
+            <input class="type-custom" id="type-custom" type="text" maxlength="80" placeholder="Google Fonts" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="font-list" aria-autocomplete="list" aria-label="Otra familia" />
+            <ul class="font-list" id="font-list" role="listbox" hidden></ul>
+          </div>
+        </div>
+        <div class="type-row">
+          <span class="type-kicker" id="mode-label">Versión</span>
+          <div class="seg" role="group" aria-labelledby="mode-label">
+            <button type="button" data-mode="light" aria-pressed="true">light</button>
+            <button type="button" data-mode="dark" aria-pressed="false">dark</button>
+          </div>
+        </div>
+        <div class="type-row">
+          <span class="type-kicker" id="color-label">Color</span>
+          <div class="swatches" role="group" aria-labelledby="color-label">
+            <label class="swatch">Fondo<input type="color" data-color="canvas" value="#f7f7f7" /></label>
+            <label class="swatch">Papel<input type="color" data-color="paper" value="#ffffff" /></label>
+            <label class="swatch">Tinta<input type="color" data-color="ink" value="#26251e" /></label>
+            <label class="swatch">Acento<input type="color" data-color="accent" value="#ffdd00" /></label>
+          </div>
+        </div>
+        <div class="type-row">
+          <span class="type-kicker" id="space-label">Espacio</span>
+          <div class="seg" role="group" aria-labelledby="space-label">
+            <button type="button" data-space="compact" aria-pressed="false">Compacto</button>
+            <button type="button" data-space="normal" aria-pressed="true">Normal</button>
+            <button type="button" data-space="ample" aria-pressed="false">Amplio</button>
+            <button type="button" data-space="extended" aria-pressed="false">Extendido</button>
+          </div>
+          <button class="ghost" id="type-reset" type="button">Volver al tema</button>
+        </div>
+      </section>
+
+      <section class="settings" id="settings" hidden>
+        <div class="settings-head">
+          <span class="stamp" id="stamp"></span>
+          <button id="refresh" type="button">Actualizar</button>
+          <button class="ghost" id="change" type="button">Cambiar cuentas</button>
+        </div>
+        <div id="notices"></div>
+        <p class="settings-note">
+          Los números salen de la sesión ya abierta aquí. No se guardan claves en esta carpeta.
+          El puerto se cambia en <code>config.json</code> si lo necesitas.
+        </p>
+      </section>
+
+      <section id="setup">
+        <div class="looking" id="looking" hidden>
+          <p>Miro Cursor, Claude y Codex en este equipo. No pido contraseñas y todavía no consulto el consumo.</p>
+        </div>
+        <div id="found" hidden>
+          <div class="picker" id="picker"></div>
+          <p class="note-box" id="claude-note" hidden>
+            Claude está marcado. macOS puede pedir permiso para leer el llavero. Pulsa Permitir: solo mira la sesión de este equipo y no se guarda ninguna clave.
+          </p>
+          <div class="actions">
+            <button class="primary" id="enter" type="button">Ver mi consumo</button>
+            <button class="ghost" id="rescan" type="button">Volver a mirar</button>
+            <p class="hint" id="enter-hint">Elige al menos una.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="board" hidden>
+        <div class="grid" id="grid"></div>
+      </section>
+
+      <footer>
+        <a href="https://www.shiftr.pro/" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 128 117" fill="currentColor" aria-hidden="true">
+            <path d="M20.8275 1.98944C23.0372 -0.663142 27.0757 -0.663148 29.2855 1.98943L40.5747 15.5411C43.6058 19.1797 41.0492 24.7423 36.3457 24.7423H13.7673C9.06382 24.7423 6.50718 19.1797 9.53831 15.5411L20.8275 1.98944Z" />
+            <path d="M0 37.5248C0 33.4466 3.318 30.1406 7.41095 30.1406H42.2531C46.3461 30.1406 49.6641 33.4466 49.6641 37.5248V72.241C49.6641 76.3191 46.3461 79.6251 42.2531 79.6251H7.41095C3.31799 79.6251 0 76.3191 0 72.241V37.5248Z" />
+            <path d="M101.157 30.1406C115.104 30.1406 126.411 41.2181 126.411 54.8829C126.411 68.5476 115.104 79.6249 101.157 79.6249C100.769 79.6249 100.383 79.6157 99.9988 79.5987C99.7902 79.6157 99.5792 79.6251 99.3661 79.6251H63.9327C59.7704 79.6251 56.3961 76.3192 56.3961 72.2411V37.5249C56.3961 33.4468 59.7703 30.1409 63.9327 30.1408H99.3661C99.5786 30.1408 99.7891 30.1497 99.9972 30.1666C100.382 30.1495 100.769 30.1406 101.157 30.1406Z" />
+            <path d="M105.964 85.0234C108.1 85.0234 110.025 85.9284 111.382 87.3775C111.709 87.6576 112.017 87.97 112.301 88.3143L124.545 103.181C126.665 105.755 126.791 109.328 125.101 112.005C123.855 114.417 121.347 116.064 118.457 116.064H63.6878C59.5794 116.064 56.2488 112.716 56.2488 108.587V92.5004C56.2488 88.371 59.5794 85.0235 63.6878 85.0234H105.964Z" />
+          </svg>
+          <span>Shift+R 2026</span>
+        </a>
+      </footer>
+    </main>
+    <script>
+      const ACCOUNTS = [
+        { id: "cursor", name: "Cursor", hint: "La app de Cursor, con la sesión ya abierta." },
+        { id: "claude", name: "Claude", hint: "Claude Desktop o Claude Code." },
+        { id: "codex", name: "Codex", hint: "La app de Codex, o codex login en la terminal." },
+      ];
+      const STORE = "consumo-cuentas";
+      const LOGOS = {
+        cursor: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11.503.131 1.891 5.678a.84.84 0 0 0-.42.726v11.188c0 .3.162.575.42.724l9.609 5.55a1 1 0 0 0 .998 0l9.61-5.55a.84.84 0 0 0 .42-.724V6.404a.84.84 0 0 0-.42-.726L12.497.131a1.01 1.01 0 0 0-.996 0M2.657 6.338h18.55c.263 0 .43.287.297.515L12.23 22.918c-.062.107-.229.064-.229-.06V12.335a.59.59 0 0 0-.295-.51l-9.11-5.257c-.109-.063-.064-.23.061-.23"/></svg>`,
+        claude: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg>`,
+        codex: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>`,
+      };
+
+      function logo(id) {
+        return `<span class="logo">${LOGOS[id] || ""}</span>`;
+      }
+
+      function liveBadge(on, title) {
+        const word = on ? "On" : "Off";
+        return `<span class="live ${on ? "on" : "off"}" role="status" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}"><i aria-hidden="true"></i>${word}</span>`;
+      }
+
+      const setup = document.querySelector("#setup");
+      const board = document.querySelector("#board");
+      const looking = document.querySelector("#looking");
+      const found = document.querySelector("#found");
+      const picker = document.querySelector("#picker");
+      const eyebrow = document.querySelector("#eyebrow");
+      const claudeNote = document.querySelector("#claude-note");
+      const enter = document.querySelector("#enter");
+      const enterHint = document.querySelector("#enter-hint");
+      const dashTools = document.querySelector("#dash-tools");
+      const settings = document.querySelector("#settings");
+      const openSettings = document.querySelector("#open-settings");
+      const notices = document.querySelector("#notices");
+      const grid = document.querySelector("#grid");
+      const stamp = document.querySelector("#stamp");
+      const refresh = document.querySelector("#refresh");
+      const title = document.querySelector("#title");
+      const lede = document.querySelector("#lede");
+
+      let selected = new Set();
+      let order = [];
+      let probes = null;
+      let timer = 0;
+      let refreshSeconds = 30;
+      let lastData = null;
+      const openFolds = new Set();
+      let scanning = false;
+
+      function readSaved() {
+        try {
+          const raw = JSON.parse(localStorage.getItem(STORE) || "null");
+          if (!Array.isArray(raw)) return null;
+          const ids = raw.filter((id) => ACCOUNTS.some((account) => account.id === id));
+          return ids.length ? ids : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function probeOf(id) {
+        return probes?.find((account) => account.id === id) || null;
+      }
+
+      function joinNames(names) {
+        if (names.length <= 1) return names[0] || "";
+        if (names.length === 2) return `${names[0]} y ${names[1]}`;
+        return `${names.slice(0, -1).join(", ")} y ${names.at(-1)}`;
+      }
+
+      function paintPicker() {
+        picker.innerHTML = ACCOUNTS.map((account) => {
+          const on = selected.has(account.id);
+          const probe = probeOf(account.id);
+          const detail = probe?.detail || account.hint;
+          const help = probe && probe.status !== "ready" && probe.help
+            ? `<span class="help">${escapeHtml(probe.help)}</span>`
+            : "";
+          const badge = probe
+            ? liveBadge(probe.status === "ready", probe.status === "ready" ? "Sesión lista" : "Sin sesión")
+            : "";
+          return `<button class="choice" type="button" data-id="${account.id}" aria-pressed="${on}">
+            <span class="mark" aria-hidden="true"></span>
+            ${logo(account.id)}
+            <span><strong>${account.name}</strong><small>${escapeHtml(detail)}</small>${help}</span>
+            ${badge}
+          </button>`;
+        }).join("");
+        const count = selected.size;
+        const readyCount = ACCOUNTS.filter((account) => selected.has(account.id) && probeOf(account.id)?.status === "ready").length;
+        enter.disabled = count === 0;
+        if (count === 0) enterHint.textContent = "Elige al menos una.";
+        else if (probes && readyCount === 0) enterHint.textContent = "Esa aún no tiene sesión. Puedes probar, o entrar y volver a mirar.";
+        else if (count === 1) enterHint.textContent = "Solo miraremos esa.";
+        else enterHint.textContent = `Miraremos ${count}.`;
+        const claude = probeOf("claude");
+        claudeNote.hidden = !(selected.has("claude") && claude?.needsKeychain);
+      }
+
+      function describeProbe() {
+        if (!probes) return "Marca solo las suscripciones de este equipo. Las que no elijas no se abren.";
+        const ready = probes.filter((account) => account.status === "ready").map((account) => account.name);
+        if (!ready.length) return "No he encontrado ninguna sesión abierta. Entra en la app y pulsa Volver a mirar.";
+        if (ready.length === probes.length) return "Las tres tienen sesión. Quita la que no quieras consultar.";
+        return `He encontrado ${joinNames(ready)}. Las demás puedes dejarlas fuera.`;
+      }
+
+      function showSetup() {
+        clearInterval(timer);
+        setup.hidden = false;
+        board.hidden = true;
+        dashTools.hidden = true;
+        settings.hidden = true;
+        openSettings.setAttribute("aria-expanded", "false");
+        eyebrow.textContent = readSaved() ? "cuentas" : "primera vez";
+        title.textContent = "Esto es lo que hay";
+        lede.hidden = false;
+        lede.textContent = describeProbe();
+        looking.hidden = true;
+        found.hidden = false;
+        paintPicker();
+      }
+
+      async function scanLocal(preserveSelection) {
+        if (scanning) return;
+        scanning = true;
+        clearInterval(timer);
+        setup.hidden = false;
+        board.hidden = true;
+        dashTools.hidden = true;
+        settings.hidden = true;
+        openSettings.setAttribute("aria-expanded", "false");
+        eyebrow.textContent = readSaved() ? "cuentas" : "primera vez";
+        title.textContent = "Un momento";
+        lede.hidden = false;
+        lede.textContent = "Miro si hay sesión de Cursor, Claude o Codex en este equipo.";
+        looking.hidden = false;
+        found.hidden = true;
+        try {
+          const res = await fetch("/api/local");
+          const data = await res.json();
+          if (!res.ok || !Array.isArray(data.accounts)) throw new Error("sin sonda");
+          probes = data.accounts;
+          if (!preserveSelection) {
+            selected = new Set(probes.filter((account) => account.status === "ready").map((account) => account.id));
+          }
+        } catch {
+          probes = null;
+          if (!preserveSelection) selected = new Set();
+        } finally {
+          scanning = false;
+          showSetup();
+        }
+      }
+
+      function showBoard() {
+        setup.hidden = true;
+        board.hidden = false;
+        dashTools.hidden = false;
+        eyebrow.textContent = "en este equipo";
+        title.textContent = "Consumo";
+        lede.hidden = true;
+      }
+
+      picker.addEventListener("click", (event) => {
+        const button = event.target.closest(".choice");
+        if (!button) return;
+        const id = button.dataset.id;
+        if (selected.has(id)) selected.delete(id);
+        else selected.add(id);
+        paintPicker();
+      });
+
+      enter.addEventListener("click", () => {
+        order = chosenIds();
+        if (!order.length) return;
+        localStorage.setItem(STORE, JSON.stringify(order));
+        showBoard();
+        load(true);
+      });
+
+      document.querySelector("#change").addEventListener("click", () => {
+        const saved = readSaved() || [];
+        order = saved.slice();
+        selected = new Set(saved);
+        scanLocal(true);
+      });
+
+      document.querySelector("#rescan").addEventListener("click", () => scanLocal(true));
+
+      function tone(used) {
+        if (used >= 95) return "bad";
+        if (used >= 80) return "warn";
+        return "ok";
+      }
+
+      const LEFT_OF = {
+        "Uso incluido": "del uso incluido",
+        "API incluida": "de la API incluida",
+        Auto: "de Auto",
+        "5 horas": "de las 5 horas",
+        Sesión: "de la sesión",
+        Semana: "de la semana",
+        "Semana · Opus": "de Opus esta semana",
+        "Semana · Sonnet": "de Sonnet esta semana",
+        "Ventana corta": "de la ventana corta",
+      };
+
+      function heroOf(tool) {
+        if (!tool.ok || !tool.meters.length) return null;
+        const included = tool.meters.find((row) => row.label === "Uso incluido");
+        if (included) return included;
+        return tool.meters.reduce((a, b) => (b.used > a.used ? b : a));
+      }
+
+      function warning(tool, hero) {
+        const api = tool.meters?.find((row) => row.label === "API incluida");
+        const total = tool.meters?.find((row) => row.label === "Uso incluido");
+        if (api && api.used >= 100 && total && total.used < 100) {
+          return "La API incluida se ha terminado. El uso total del plan todavía tiene margen.";
+        }
+        if (!hero || hero.used < 95) return "";
+        if (hero.label === "Semana") return "Esta semana ya no queda margen.";
+        if (hero.label === "5 horas" || hero.label === "Sesión") return "La sesión está llena.";
+        return `${hero.label} está al límite.`;
+      }
+
+      function friendlyError(message) {
+        const text = String(message || "");
+        if (/llavero|Permitir/i.test(text)) return text;
+        if (/no pudo leer/i.test(text)) return "No he podido leer las sesiones. Prueba a actualizar en un momento.";
+        return text;
+      }
+
+      function formatTokens(n) {
+        const value = Number(n) || 0;
+        if (value >= 1e9) return `${(value / 1e9).toFixed(1).replace(".", ",")}B`;
+        if (value >= 1e6) return `${(value / 1e6).toFixed(1).replace(".", ",")}M`;
+        if (value >= 1e3) return `${Math.round(value / 1e3)}K`;
+        return String(Math.round(value));
+      }
+
+      function renderList(items) {
+        if (!items?.length) return `<p class="empty-hist">Todavía no hay datos para comparar.</p>`;
+        return items.map((item) => `<div class="list-row">
+          <span title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</span>
+          <div class="bar" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(item.share)}" aria-label="${escapeHtml(item.name)}"><i style="width:${item.width}%"></i></div>
+          <span class="list-meta">${formatTokens(item.tokens)} · ${formatPct(item.share)}</span>
+        </div>`).join("");
+      }
+
+      function toolLines(tool) {
+        if (!tool.ok) return [friendlyError(tool.error)];
+        const hero = heroOf(tool);
+        const lines = [];
+        const alert = warning(tool, hero);
+        if (alert) lines.push(alert);
+        const reset = hero?.reset
+          ? `${hero.reset.charAt(0).toUpperCase()}${hero.reset.slice(1)}.`
+          : tool.note;
+        if (reset) lines.push(reset);
+        if (tool.source) lines.push(tool.source);
+        if (tool.history?.period) lines.push(tool.history.period);
+        return lines;
+      }
+
+      function renderNotices(data) {
+        const heroes = data.tools.map((tool) => heroOf(tool)).filter(Boolean);
+        const worst = heroes.reduce((max, row) => Math.max(max, row.used), 0);
+        const summary = !heroes.length
+          ? ""
+          : worst >= 95
+            ? "Alguna suscripción está al límite."
+            : worst >= 80
+              ? "Vas justo en alguna."
+              : "Vas con margen en lo que has elegido.";
+        const blocks = data.tools.flatMap((tool) =>
+          toolLines(tool).map((text) => `<p class="notice"><strong>${escapeHtml(tool.name)}.</strong> ${escapeHtml(text)}</p>`),
+        );
+        notices.innerHTML = `${summary ? `<p class="notice">${escapeHtml(summary)}</p>` : ""}${blocks.join("")}`;
+      }
+
+      function render(data) {
+        refreshSeconds = data.refreshSeconds || 30;
+        const when = new Intl.DateTimeFormat("es", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }).format(new Date(data.fetchedAt));
+        stamp.textContent = `Actualizado ${when}`;
+        lastData = data;
+        renderNotices(data);
+        const rank = new Map(chosenIds().map((id, index) => [id, index]));
+        const tools = data.tools.slice().sort((a, b) => (rank.get(a.id) ?? 99) - (rank.get(b.id) ?? 99));
+        grid.innerHTML = tools.map((tool) => {
+          const hero = heroOf(tool);
+          const state = tool.ok
+            ? { on: true, title: "Recogiendo datos" }
+            : { on: false, title: /sesión|login|entra|cuenta/i.test(String(tool.error || "")) ? "Sin sesión" : "Sin datos" };
+          const grip = `<span class="handle" draggable="true" role="button" tabindex="0" aria-label="Mover ${escapeHtml(tool.name)}" title="Arrastra para ordenar"><svg viewBox="0 0 10 16" aria-hidden="true"><circle cx="2" cy="2" r="1.15" fill="currentColor"/><circle cx="8" cy="2" r="1.15" fill="currentColor"/><circle cx="2" cy="8" r="1.15" fill="currentColor"/><circle cx="8" cy="8" r="1.15" fill="currentColor"/><circle cx="2" cy="14" r="1.15" fill="currentColor"/><circle cx="8" cy="14" r="1.15" fill="currentColor"/></svg></span>`;
+          const head = `<div class="card-top">
+              <div class="brand">${grip}${logo(tool.id)}<div class="name">${escapeHtml(tool.name)}</div></div>
+              <div class="card-side">${liveBadge(state.on, state.title)}${tool.plan ? `<div class="plan">${escapeHtml(tool.plan)}</div>` : ""}</div>
+            </div>`;
+          if (!tool.ok || !hero) {
+            return `<article data-id="${tool.id}">${head}<p class="hero-num">—</p></article>`;
+          }
+          const rows = tool.meters.map((row) => {
+            const level = tone(row.used);
+            const width = Math.max(0, Math.min(100, row.used));
+            return `<div class="meter">
+              <span>${escapeHtml(row.label)}</span>
+              <div class="bar ${level}" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(row.used)}" aria-label="${escapeHtml(row.label)}, usado"><i style="width:${width}%"></i></div>
+              <span class="pct">${formatPct(row.used)}</span>
+            </div>`;
+          }).join("");
+          const total = tool.history?.tokens ? formatTokens(tool.history.tokens) : "";
+          return `<article data-id="${tool.id}">
+            ${head}
+            <p class="hero-num">${formatPct(hero.left)}<small>queda ${escapeHtml(LEFT_OF[hero.label] || "en esta ventana")}</small></p>
+            <div class="meters"><div class="meter-key">usado</div>${rows}</div>
+            ${renderChart(tool.history?.months)}
+            <div class="folds">
+              ${fold(tool.id, "modelos", "Modelos", total, tool.history?.models)}
+              ${fold(tool.id, "proyectos", "Proyectos", total, tool.history?.projects)}
+            </div>
+          </article>`;
+        }).join("");
+      }
+
+      function renderChart(months) {
+        if (!months?.length) return "";
+        return `<div class="chart" role="img" aria-label="Consumo por meses">${months.map((month) => `<div class="col${month.current ? " now" : ""}">
+            <div class="shaft" title="${escapeHtml(formatTokens(month.tokens))} tokens"><i style="height:${month.height}%"></i></div>
+            <span>${escapeHtml(month.label)}</span>
+          </div>`).join("")}</div>`;
+      }
+
+      function fold(id, kind, title, total, items) {
+        const key = `${id}:${kind}`;
+        return `<details class="fold" data-fold="${key}"${openFolds.has(key) ? " open" : ""}>
+          <summary>${escapeHtml(title)}${total ? `<span class="fold-meta">${escapeHtml(total)}</span>` : ""}</summary>
+          ${renderList(items)}
+        </details>`;
+      }
+
+      function formatPct(n) {
+        const rounded = Math.round(n * 10) / 10;
+        const text = Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1).replace(".", ",");
+        return `${text}%`;
+      }
+
+      function escapeHtml(value) {
+        return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+      }
+
+      function chosenIds() {
+        const known = order.filter((id) => selected.has(id));
+        const extra = [...selected].filter((id) => !known.includes(id));
+        return known.concat(extra);
+      }
+
+      function saveOrder(ids) {
+        order = ids;
+        localStorage.setItem(STORE, JSON.stringify(order));
+      }
+
+      function showSkeleton() {
+        const count = Math.max(chosenIds().length, 1);
+        const bars = [28, 46, 22, 64, 80, 38];
+        grid.setAttribute("aria-busy", "true");
+        grid.innerHTML = Array.from({ length: count }, () => `<article class="skeleton" aria-hidden="true">
+          <div class="sk-top"><i class="sk sk-logo"></i><i class="sk sk-name"></i><i class="sk sk-pill"></i></div>
+          <i class="sk sk-num"></i>
+          <i class="sk sk-line"></i>
+          <i class="sk sk-line short"></i>
+          <div class="sk-chart">${bars.map((height) => `<i class="sk sk-bar" style="height:${height}%"></i>`).join("")}</div>
+          <i class="sk sk-fold"></i>
+          <i class="sk sk-fold"></i>
+        </article>`).join("");
+      }
+
+      async function load(fresh) {
+        const ids = chosenIds();
+        if (!ids.length) return;
+        refresh.disabled = true;
+        stamp.textContent = "Mirando las sesiones…";
+        if (fresh || !lastData) showSkeleton();
+        try {
+          const params = new URLSearchParams({ tools: ids.join(",") });
+          if (fresh) params.set("fresh", "1");
+          const res = await fetch(`/api/usage?${params}`);
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "No he podido leer las sesiones.");
+          render(data);
+          grid.setAttribute("aria-busy", "false");
+        } catch (error) {
+          stamp.textContent = friendlyError(error.message);
+          settings.hidden = false;
+          openSettings.setAttribute("aria-expanded", "true");
+          if (lastData) render(lastData);
+          else grid.innerHTML = "";
+          grid.setAttribute("aria-busy", "false");
+        } finally {
+          refresh.disabled = false;
+          clearInterval(timer);
+          timer = setInterval(() => load(false), refreshSeconds * 1000);
+        }
+      }
+
+      let dragId = "";
+
+      grid.addEventListener("dragstart", (event) => {
+        const handle = event.target.closest?.(".handle");
+        const card = handle?.closest("article[data-id]");
+        if (!card) {
+          event.preventDefault();
+          return;
+        }
+        dragId = card.dataset.id;
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", dragId);
+        event.dataTransfer.setDragImage(card, 28, 28);
+        card.classList.add("dragging");
+      });
+
+      grid.addEventListener("dragend", () => {
+        dragId = "";
+        grid.querySelectorAll("article").forEach((card) => card.classList.remove("dragging", "over"));
+      });
+
+      grid.addEventListener("dragover", (event) => {
+        const card = event.target.closest?.("article[data-id]");
+        if (!card || !dragId || card.dataset.id === dragId) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "move";
+        grid.querySelectorAll("article.over").forEach((el) => {
+          if (el !== card) el.classList.remove("over");
+        });
+        card.classList.add("over");
+      });
+
+      grid.addEventListener("drop", (event) => {
+        const card = event.target.closest?.("article[data-id]");
+        const fromId = dragId || event.dataTransfer.getData("text/plain");
+        if (!card || !fromId || card.dataset.id === fromId) return;
+        event.preventDefault();
+        const ids = chosenIds();
+        const from = ids.indexOf(fromId);
+        const to = ids.indexOf(card.dataset.id);
+        if (from < 0 || to < 0) return;
+        ids.splice(to, 0, ids.splice(from, 1)[0]);
+        saveOrder(ids);
+        const moving = grid.querySelector(`article[data-id="${fromId}"]`);
+        if (!moving) return;
+        if (from < to) card.after(moving);
+        else card.before(moving);
+        card.classList.remove("over");
+      });
+
+      grid.addEventListener("toggle", (event) => {
+        const foldEl = event.target.closest?.("details.fold");
+        if (!foldEl) return;
+        if (foldEl.open) openFolds.add(foldEl.dataset.fold);
+        else openFolds.delete(foldEl.dataset.fold);
+      }, true);
+
+      openSettings.addEventListener("click", () => {
+        const open = settings.hidden;
+        settings.hidden = !open;
+        openSettings.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+
+      refresh.addEventListener("click", () => load(true));
+
+      const typeEditor = document.querySelector("#type-editor");
+      const openType = document.querySelector("#open-type");
+      const typeCustom = document.querySelector("#type-custom");
+      let typeTheme = window.consumoType.read();
+
+      function paintTypeEditor(keepCustom) {
+        typeEditor.querySelectorAll("[data-family]").forEach((button) => {
+          button.setAttribute("aria-pressed", button.dataset.family === typeTheme.family ? "true" : "false");
+        });
+        typeEditor.querySelectorAll("[data-space]").forEach((button) => {
+          button.setAttribute("aria-pressed", button.dataset.space === typeTheme.space ? "true" : "false");
+        });
+        typeEditor.querySelectorAll("[data-mode]").forEach((button) => {
+          const preset = window.consumoType.modes[button.dataset.mode];
+          const on = preset && ["canvas", "paper", "ink", "accent"].every((key) => typeTheme[key] === preset[key]);
+          button.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+        typeEditor.querySelectorAll("[data-color]").forEach((input) => {
+          input.value = typeTheme[input.dataset.color];
+        });
+        if (!keepCustom) typeCustom.value = typeTheme.custom;
+      }
+
+      openType.addEventListener("click", () => {
+        const open = typeEditor.hidden;
+        typeEditor.hidden = !open;
+        openType.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+
+      typeEditor.addEventListener("click", (event) => {
+        const family = event.target.closest("#type-editor [data-family]");
+        const space = event.target.closest("#type-editor [data-space]");
+        const mode = event.target.closest("#type-editor [data-mode]");
+        if (mode && window.consumoType.modes[mode.dataset.mode]) {
+          typeTheme = window.consumoType.write({ ...typeTheme, ...window.consumoType.modes[mode.dataset.mode] });
+          paintTypeEditor();
+        } else if (family) {
+          typeTheme = window.consumoType.write({ ...typeTheme, family: family.dataset.family, custom: "" });
+          paintTypeEditor();
+        } else if (space) {
+          typeTheme = window.consumoType.write({ ...typeTheme, space: space.dataset.space });
+          paintTypeEditor();
+        }
+      });
+
+      typeEditor.addEventListener("input", (event) => {
+        const color = event.target.dataset.color;
+        if (color) {
+          typeTheme = window.consumoType.write({ ...typeTheme, [color]: event.target.value });
+          paintTypeEditor(true);
+          return;
+        }
+        if (event.target === typeCustom) showFonts();
+      });
+
+      window.GOOGLE_FONTS = ["ABeeZee","ADLaM Display","AR One Sans","Abel","Abhaya Libre","Aboreto","Abril Fatface","Abyssinica SIL","Aclonica","Acme","Actor","Adamina","Advent Pro","Afacad","Afacad Flux","Agbalumo","Agdasima","Agu Display","Aguafina Script","Akatab","Akaya Kanadaka","Akaya Telivigala","Akronim","Akshar","Akt","Aladin","Alan Sans","Alata","Alatsi","Albert Sans","Aldrich","Alef","Alegreya","Alegreya SC","Alegreya Sans","Alegreya Sans SC","Aleo","Alex Brush","Alexandria","Alfa Slab One","Alice","Alien Block","Alike","Alike Angular","Alkalami","Alkatra","Allan","Allerta","Allerta Stencil","Allison","Allkin","Allura","Almarai","Almendra","Almendra Display","Almendra SC","Alumni Sans","Alumni Sans Collegiate One","Alumni Sans Inline One","Alumni Sans Pinstripe","Alumni Sans SC","Alyamama","Amarante","Amaranth","Amarna","Amatic SC","Amethysta","Amiko","Amiri","Amiri Quran","Amita","Anaheim","Ancizar Sans","Ancizar Serif","Andada Pro","Andika","Anek Bangla","Anek Devanagari","Anek Gujarati","Anek Gurmukhi","Anek Kannada","Anek Latin","Anek Malayalam","Anek Odia","Anek Tamil","Anek Telugu","Angkor","Annapurna SIL","Annie Use Your Telescope","Anonymous Pro","Anta","Antic","Antic Didone","Antic Slab","Anton","Anton SC","Antonio","Anuphan","Anybody","Aoboshi One","Arapey","Arbutus","Arbutus Slab","Architects Daughter","Archivo","Archivo Black","Archivo Narrow","Are You Serious","Aref Ruqaa","Aref Ruqaa Ink","Arima","Arimo","Arizonia","Armata","Arsenal","Arsenal SC","Artifika","Arvo","Arya","Asap","Asap Condensed","Asap Sharp","Asar","Asimovian","Asset","Assistant","Asta Sans","Astloch","Asul","Athiti","Atkinson Hyperlegible","Atkinson Hyperlegible Mono","Atkinson Hyperlegible Next","Atma","Atomic Age","Aubrey","Audiowide","Autour One","Average","Average Sans","Averia Gruesa Libre","Averia Libre","Averia Sans Libre","Averia Serif Libre","Azeret Mono","B612","B612 Mono","BBH Bartle","BBH Bogle","BBH Hegarty","BIZ UDGothic","BIZ UDMincho","BIZ UDPGothic","BIZ UDPMincho","BJCree","Babylonica","Bacasime Antique","Bad Script","Badeen Display","Bagel Fat One","Bahiana","Bahianita","Bai Jamjuree","Bakbak One","Ballet","Baloo 2","Baloo Bhai 2","Baloo Bhaijaan 2","Baloo Bhaina 2","Baloo Chettan 2","Baloo Da 2","Baloo Paaji 2","Baloo Tamma 2","Baloo Tammudu 2","Baloo Thambi 2","Balsamiq Sans","Balthazar","Bangers","Barlow","Barlow Condensed","Barlow Semi Condensed","Barriecito","Barrio","Basic","Baskervville","Baskervville SC","Battambang","Baumans","Bayon","Be Vietnam Pro","Beau Rivage","Bebas Neue","Beiruti","Belanosima","Belgrano","Bellefair","Belleza","Bellota","Bellota Text","BenchNine","Benne","Bentham","Berkshire Swash","Besley","Betania Patmos","Betania Patmos GDL","Betania Patmos In","Betania Patmos In GDL","Beth Ellen","Bevan","BhuTuka Expanded One","Big Shoulders","Big Shoulders Inline","Big Shoulders Stencil","Bigelow Rules","Bigshot One","Bilbo","Bilbo Swash Caps","BioRhyme","BioRhyme Expanded","Birthstone","Birthstone Bounce","Biryani","Bitcount","Bitcount Grid Double","Bitcount Grid Double Ink","Bitcount Grid Single","Bitcount Grid Single Ink","Bitcount Ink","Bitcount Prop Double","Bitcount Prop Double Ink","Bitcount Prop Single","Bitcount Prop Single Ink","Bitcount Single","Bitcount Single Ink","Bitter","Black And White Picture","Black Han Sans","Black Ops One","Blaka","Blaka Hollow","Blaka Ink","Blinker","Bodoni Moda","Bodoni Moda SC","Bokor","Boldonse","Bona Nova","Bona Nova SC","Bonbon","Bonheur Royale","Boogaloo","Borel","Bowlby One","Bowlby One SC","Bpmf Huninn","Bpmf Iansui","Bpmf Zihi Kai Std","Braah One","Brawler","Bree Serif","Bricolage Grotesque","Bruno Ace","Bruno Ace SC","Brygada 1918","Bubblegum Sans","Bubbler One","Buda","Buenard","Bungee","Bungee Hairline","Bungee Inline","Bungee Outline","Bungee Shade","Bungee Spice","Bungee Tint","Butcherman","Butterfly Kids","Bytesized","Caacupe One","Cabin","Cabin Condensed","Cabin Sketch","Cactus Classical Serif","Caesar Dressing","Cagliostro","Cairo","Cairo Play","Cal Sans","Caladea","Calistoga","Calligraffitti","Cambay","Cambo","Candal","Cantarell","Cantata One","Cantora One","Caprasimo","Capriola","Caramel","Carattere","Cardo","Carlito","Carme","Carrois Gothic","Carrois Gothic SC","Carter One","Cascadia Code","Cascadia Mono","Castoro","Castoro Titling","Catamaran","Caudex","Cause","Caveat","Caveat Brush","Cedarville Cursive","Ceviche One","Chakra Petch","Changa","Changa One","Chango","Charis SIL","Charm","Charmonman","Chathura","Chau Philomene One","Chela One","Chelsea Market","Chenla","Cherish","Cherry Bomb One","Cherry Cream Soda","Cherry Swash","Chewy","Chicle","Chilanka","Chiron GoRound TC","Chiron Hei HK","Chiron Sung HK","Chivo","Chivo Mono","Chocolate Classical Sans","Chokokutai","Chonburi","Cinzel","Cinzel Decorative","Clarity City","Clicker Script","Climate Crisis","Coda","Codystar","Coiny","Combo","Comfortaa","Comforter","Comforter Brush","Comic Neue","Comic Relief","Coming Soon","Comme","Commissioner","Concert One","Condiment","Content","Contrail One","Convergence","Cookie","Copse","Coral Pixels","Corben","Corinthia","Cormorant","Cormorant Garamond","Cormorant Infant","Cormorant SC","Cormorant Unicase","Cormorant Upright","Cossette Texte","Cossette Titre","Courgette","Courier Prime","Cousine","Coustard","Covered By Your Grace","Crafty Girls","Creepster","Crete Round","Crimson Pro","Crimson Text","Croissant One","Crushed","Cuprum","Cute Font","Cutive","Cutive Mono","DM Mono","DM Sans","DM Serif Display","DM Serif Text","Dai Banna SIL","Damion","Dancing Script","Danfo","Dangrek","Darker Grotesque","Darumadrop One","Datatype","David Libre","Dawning of a New Day","Days One","Dekko","Dela Gothic One","Delicious Handrawn","Delius","Delius Swash Caps","Delius Unicase","Della Respira","Denk One","Devonshire","Dhurjati","Didact Gothic","Diphylleia","Diplomata","Diplomata SC","Do Hyeon","Dokdo","Domine","Donegal One","Dongle","Doppio One","Dorsa","Dosis","DotGothic16","Doto","Dr Sugiyama","Duru Sans","DynaPuff","Dynalight","EB Garamond","Eagle Lake","East Sea Dokdo","Eater","Economica","Eczar","Edu AU VIC WA NT Arrows","Edu AU VIC WA NT Dots","Edu AU VIC WA NT Guides","Edu AU VIC WA NT Hand","Edu AU VIC WA NT Pre","Edu NSW ACT Cursive","Edu NSW ACT Foundation","Edu NSW ACT Hand Pre","Edu QLD Beginner","Edu QLD Hand","Edu SA Beginner","Edu SA Hand","Edu TAS Beginner","Edu VIC WA NT Beginner","Edu VIC WA NT Hand","Edu VIC WA NT Hand Pre","El Messiri","Electrolize","Elms Sans","Elsie","Elsie Swash Caps","Emblema One","Emilys Candy","Encode Sans","Encode Sans Condensed","Encode Sans Expanded","Encode Sans SC","Encode Sans Semi Condensed","Encode Sans Semi Expanded","Engagement","Englebert","Enriqueta","Ephesis","Epilogue","Epunda Sans","Epunda Slab","Erica One","Esteban","Estedad","Estonia","Euphoria Script","Ewert","Exile","Exo","Exo 2","Expletus Sans","Explora","Faculty Glyphic","Fahkwang","Familjen Grotesk","Fanwood Text","Farro","Farsan","Fascinate","Fascinate Inline","Faster One","Fasthand","Fauna One","Faustina","Federant","Federo","Felipa","Fenix","Festive","Figtree","Finger Paint","Finlandica Headline","Finlandica Text","Fira Code","Fira Mono","Fira Sans","Fira Sans Condensed","Fira Sans Extra Condensed","Fjalla One","Fjord One","Flamenco","Flavors","Fleur De Leah","Flow Block","Flow Circular","Flow Rounded","Foldit","Fondamento","Fontdiner Swanky","Forum","Fragment Mono","Francois One","Frank Ruhl Libre","Fraunces","Freckle Face","Fredericka the Great","Fredoka","Freehand","Freeman","Fresca","Frijole","Fruktur","Fugaz One","Fuggles","Funnel Display","Funnel Sans","Fustat","Fuzzy Bubbles","GFS Didot","GFS Neohellenic","Ga Maamli","Gabarito","Gabriela","Gaegu","Gafata","Gajraj One","Galada","Galdeano","Galindo","Gamja Flower","Gantari","Gasoek One","Gayathri","Geist","Geist Mono","Geist Pixel","Gelasio","Gemunu Libre","Genos","Gentium Book Plus","Gentium Plus","Geo","Geologica","Geom","Geomini","Georama","Geostar","Geostar Fill","Germania One","Gideon Roman","Gidole","Gidugu","Gilda Display","Girassol","Give You Glory","Glass Antiqua","Glegoo","Gloock","Gloria Hallelujah","Glory","Gluten","Goblin One","Gochi Hand","Goldman","Golos Text","Google Sans","Google Sans Code","Google Sans Flex","Gorditas","Gothic A1","Gotu","Goudy Bookletter 1911","Gowun Batang","Gowun Dodum","Graduate","Grand Hotel","Grandiflora One","Grandstander","Grape Nuts","Gravitas One","Great Vibes","Grechen Fuemen","Grenze","Grenze Gotisch","Grey Qo","Griffy","Gruppo","Gudea","Gugi","Gulzar","Gupter","Gurajada","Gveret Levin","Gwendolyn","Habibi","Hachi Maru Pop","Hahmlet","Halant","Hammersmith One","Hanalei","Hanalei Fill","Handjet","Handlee","Hanken Grotesk","Hanuman","Happy Monkey","Harmattan","Headland One","Hedvig Letters Sans","Hedvig Letters Serif","Heebo","Henny Penny","Hepta Slab","Herr Von Muellerhoff","Hi Melody","Hibur Mono","Hina Mincho","Hind","Hind Guntur","Hind Madurai","Hind Mysuru","Hind Siliguri","Hind Vadodara","Holtwood One SC","Homemade Apple","Homenaje","Honk","Host Grotesk","Hubballi","Hubot Sans","Huninn","Hurricane","IBM Plex Mono","IBM Plex Sans","IBM Plex Sans Arabic","IBM Plex Sans Condensed","IBM Plex Sans Devanagari","IBM Plex Sans Hebrew","IBM Plex Sans JP","IBM Plex Sans KR","IBM Plex Sans Thai","IBM Plex Sans Thai Looped","IBM Plex Serif","IM Fell DW Pica","IM Fell DW Pica SC","IM Fell Double Pica","IM Fell Double Pica SC","IM Fell English","IM Fell English SC","IM Fell French Canon","IM Fell French Canon SC","IM Fell Great Primer","IM Fell Great Primer SC","Iansui","Ibarra Real Nova","Iceberg","Iceland","Idiqlat","Imbue","Imperial Script","Imprima","Inclusive Sans","Inconsolata","Inder","Indie Flower","Ingrid Darling","Inika","Inknut Antiqua","Inria Sans","Inria Serif","Inspiration","Instrument Sans","Instrument Serif","Intel One Mono","Inter","Inter Tight","Iosevka Charon","Iosevka Charon Mono","Irish Grover","Island Moments","Isometra","Istok Web","Italiana","Italianno","Itim","Jacquard 12","Jacquard 12 Charted","Jacquard 24","Jacquard 24 Charted","Jacquarda Bastarda 9","Jacquarda Bastarda 9 Charted","Jacques Francois","Jacques Francois Shadow","Jaini","Jaini Purva","Jaldi","Jaro","Jersey 10","Jersey 10 Charted","Jersey 15","Jersey 15 Charted","Jersey 20","Jersey 20 Charted","Jersey 25","Jersey 25 Charted","JetBrains Mono","Jim Nightshade","Joan","Jockey One","Jolly Lodger","Jomhuria","Jomolhari","Josefin Sans","Josefin Slab","Jost","Joti One","Jua","Judson","Julee","Julius Sans One","Junge","Jura","Just Another Hand","Just Me Again Down Here","K2D","Kablammo","Kadwa","Kaisei Decol","Kaisei HarunoUmi","Kaisei Opti","Kaisei Tokumin","Kalam","Kalnia","Kalnia Glaze","Kameron","Kanchenjunga","Kanit","Kantumruy Pro","Kapakana","Karantina","Karla","Karla Tamil Inclined","Karla Tamil Upright","Karma","Katibeh","Kaushan Script","Kavivanar","Kavoon","Kay Pho Du","Kdam Thmor Pro","Keania One","Kedebideri","Kelly Slab","Kenia","Khand","Khmer","Khula","Kings","Kirang Haerang","Kite One","Kiwi Maru","Klee One","Knewave","KoHo","Kodchasan","Kode Mono","Koh Santepheap","Kolker Brush","Konkhmer Sleokchher","Kosugi","Kosugi Maru","Kotta One","Koulen","Kranky","Kreon","Kripa","Kristi","Krona One","Krub","Kufam","Kulim Park","Kumar One","Kumar One Outline","Kumbh Sans","Kurale","LINE Seed JP","LXGW Marker Gothic","LXGW WenKai Mono TC","LXGW WenKai TC","La Belle Aurore","Labrada","Lacquer","Laila","Lakki Reddy","Lalezar","Lancelot","Langar","Lateef","Lato","Lavishly Yours","League Gothic","League Script","League Spartan","Leckerli One","Ledger","Lekton","Lemon","Lemonada","Lexend","Lexend Deca","Lexend Exa","Lexend Giga","Lexend Mega","Lexend Peta","Lexend Tera","Lexend Zetta","Libertinus Keyboard","Libertinus Math","Libertinus Mono","Libertinus Sans","Libertinus Serif","Libertinus Serif Display","Libre Barcode 128","Libre Barcode 128 Text","Libre Barcode 39","Libre Barcode 39 Extended","Libre Barcode 39 Extended Text","Libre Barcode 39 Text","Libre Barcode EAN13 Text","Libre Baskerville","Libre Bodoni","Libre Caslon Condensed","Libre Caslon Display","Libre Caslon Text","Libre Franklin","Licorice","Life Savers","Lilex","Lilita One","Lily Script One","Limelight","Linden Hill","Linefont","Lisu Bosa","Liter","Literata","Liu Jian Mao Cao","Livvic","Lobster","Lobster Two","Londrina Outline","Londrina Shadow","Londrina Sketch","Londrina Solid","Long Cang","Lora","Love Light","Love Ya Like A Sister","Loved by the King","Lovers Quarrel","Luckiest Guy","Lugrasimo","Lumanosimo","Lunasima","Lusitana","Lustria","Luxurious Roman","Luxurious Script","M PLUS 1","M PLUS 1 Code","M PLUS 1p","M PLUS 2","M PLUS Code Latin","M PLUS Rounded 1c","M PLUS U","Ma Shan Zheng","Macondo","Macondo Swash Caps","Mada","Madimi One","Magra","Maiden Orange","Maitree","Major Mono Display","Mako","Mali","Mallanna","Maname","Mandali","Manjari","Manrope","Mansalva","Manuale","Manufacturing Consent","Marcellus","Marcellus SC","Marck Script","Margarine","Marhey","Markazi Text","Marko One","Marmelad","Martel","Martel Sans","Martian Mono","Marvel","Matangi","Mate","Mate SC","Matemasie","Maven Pro","McLaren","Mea Culpa","Meddon","MedievalSharp","Medula One","Meera Inimai","Megrim","Meie Script","Menbere","Meow Script","Merienda","Merriweather","Merriweather Sans","Metal","Metal Mania","Metamorphous","Metrophobic","Michroma","Micro 5","Micro 5 Charted","Milonga","Miltonian","Miltonian Tattoo","Mina","Mingzat","Miniver","Miranda Sans","Miriam Libre","Mirza","Miss Fajardose","Mitr","Mochiy Pop One","Mochiy Pop P One","Modak","Modern Antiqua","Moderustic","Mogra","Mohave","Moirai One","Molengo","Molle","Momo Signature","Momo Trust Display","Momo Trust Sans","Mona Sans","Monda","Monofett","Monomakh","Monomaniac One","Monoton","Monsieur La Doulaise","Montaga","Montagu Slab","MonteCarlo","Montenegrin Gothic One","Montez","Montserrat","Montserrat Alternates","Montserrat Underline","Moo Lah Lah","Mooli","Moon Dance","Moul","Moulpali","Mountains of Christmas","Mouse Memoirs","Mozilla Headline","Mozilla Text","Mr Bedfort","Mr Dafoe","Mr De Haviland","Mrs Saint Delafield","Mrs Sheppards","Ms Madi","Mukta","Mukta Mahee","Mukta Malar","Mukta Vaani","Mulish","Murecho","MuseoModerno","My Soul","Mynerve","Mystery Quest","NTR","Nabla","Namdhinggo","Nanum Brush Script","Nanum Gothic","Nanum Gothic Coding","Nanum Myeongjo","Nanum Pen Script","Narnoor","Nata Sans","National Park","Neonderthaw","Nerko One","Neucha","Neuton","New Amsterdam","New Rocker","New Tegomin","News Cycle","Newsreader","Niconne","Niramit","Nixie One","Nobile","Nokora","Norican","Nosifer","Notable","Nothing You Could Do","Noticia Text","Noto Color Emoji","Noto Emoji","Noto Kufi Arabic","Noto Music","Noto Naskh Arabic","Noto Nastaliq Urdu","Noto Rashi Hebrew","Noto Sans","Noto Sans Adlam","Noto Sans Adlam Unjoined","Noto Sans Anatolian Hieroglyphs","Noto Sans Arabic","Noto Sans Armenian","Noto Sans Avestan","Noto Sans Balinese","Noto Sans Bamum","Noto Sans Bassa Vah","Noto Sans Batak","Noto Sans Bengali","Noto Sans Bhaiksuki","Noto Sans Brahmi","Noto Sans Buginese","Noto Sans Buhid","Noto Sans Canadian Aboriginal","Noto Sans Carian","Noto Sans Caucasian Albanian","Noto Sans Chakma","Noto Sans Cham","Noto Sans Cherokee","Noto Sans Chorasmian","Noto Sans Coptic","Noto Sans Cuneiform","Noto Sans Cypriot","Noto Sans Cypro Minoan","Noto Sans Deseret","Noto Sans Devanagari","Noto Sans Display","Noto Sans Duployan","Noto Sans Egyptian Hieroglyphs","Noto Sans Elbasan","Noto Sans Elymaic","Noto Sans Ethiopic","Noto Sans Georgian","Noto Sans Glagolitic","Noto Sans Gothic","Noto Sans Grantha","Noto Sans Gujarati","Noto Sans Gunjala Gondi","Noto Sans Gurmukhi","Noto Sans HK","Noto Sans Hanifi Rohingya","Noto Sans Hanunoo","Noto Sans Hatran","Noto Sans Hebrew","Noto Sans Imperial Aramaic","Noto Sans Indic Siyaq Numbers","Noto Sans Inscriptional Pahlavi","Noto Sans Inscriptional Parthian","Noto Sans JP","Noto Sans Javanese","Noto Sans KR","Noto Sans Kaithi","Noto Sans Kannada","Noto Sans Kawi","Noto Sans Kayah Li","Noto Sans Kharoshthi","Noto Sans Khmer","Noto Sans Khojki","Noto Sans Khudawadi","Noto Sans Lao","Noto Sans Lao Looped","Noto Sans Lepcha","Noto Sans Limbu","Noto Sans Linear A","Noto Sans Linear B","Noto Sans Lisu","Noto Sans Lycian","Noto Sans Lydian","Noto Sans Mahajani","Noto Sans Malayalam","Noto Sans Mandaic","Noto Sans Manichaean","Noto Sans Marchen","Noto Sans Masaram Gondi","Noto Sans Math","Noto Sans Mayan Numerals","Noto Sans Medefaidrin","Noto Sans Meetei Mayek","Noto Sans Mende Kikakui","Noto Sans Meroitic","Noto Sans Miao","Noto Sans Modi","Noto Sans Mongolian","Noto Sans Mono","Noto Sans Mro","Noto Sans Multani","Noto Sans Myanmar","Noto Sans NKo","Noto Sans NKo Unjoined","Noto Sans Nabataean","Noto Sans Nag Mundari","Noto Sans Nandinagari","Noto Sans New Tai Lue","Noto Sans Newa","Noto Sans Nushu","Noto Sans Ogham","Noto Sans Ol Chiki","Noto Sans Old Hungarian","Noto Sans Old Italic","Noto Sans Old North Arabian","Noto Sans Old Permic","Noto Sans Old Persian","Noto Sans Old Sogdian","Noto Sans Old South Arabian","Noto Sans Old Turkic","Noto Sans Oriya","Noto Sans Osage","Noto Sans Osmanya","Noto Sans Pahawh Hmong","Noto Sans Palmyrene","Noto Sans Pau Cin Hau","Noto Sans PhagsPa","Noto Sans Phoenician","Noto Sans Psalter Pahlavi","Noto Sans Rejang","Noto Sans Runic","Noto Sans SC","Noto Sans Samaritan","Noto Sans Saurashtra","Noto Sans Sharada","Noto Sans Shavian","Noto Sans Siddham","Noto Sans SignWriting","Noto Sans Sinhala","Noto Sans Sogdian","Noto Sans Sora Sompeng","Noto Sans Soyombo","Noto Sans Sundanese","Noto Sans Sunuwar","Noto Sans Syloti Nagri","Noto Sans Symbols","Noto Sans Symbols 2","Noto Sans Syriac","Noto Sans Syriac Eastern","Noto Sans Syriac Western","Noto Sans TC","Noto Sans Tagalog","Noto Sans Tagbanwa","Noto Sans Tai Le","Noto Sans Tai Tham","Noto Sans Tai Viet","Noto Sans Takri","Noto Sans Tamil","Noto Sans Tamil Supplement","Noto Sans Tangsa","Noto Sans Telugu","Noto Sans Thaana","Noto Sans Thai","Noto Sans Thai Looped","Noto Sans Tifinagh","Noto Sans Tirhuta","Noto Sans Ugaritic","Noto Sans Vai","Noto Sans Vithkuqi","Noto Sans Wancho","Noto Sans Warang Citi","Noto Sans Yi","Noto Sans Zanabazar Square","Noto Serif","Noto Serif Ahom","Noto Serif Armenian","Noto Serif Balinese","Noto Serif Bengali","Noto Serif Devanagari","Noto Serif Display","Noto Serif Dives Akuru","Noto Serif Dogra","Noto Serif Ethiopic","Noto Serif Georgian","Noto Serif Grantha","Noto Serif Gujarati","Noto Serif Gurmukhi","Noto Serif HK","Noto Serif Hebrew","Noto Serif Hentaigana","Noto Serif JP","Noto Serif KR","Noto Serif Kannada","Noto Serif Khitan Small Script","Noto Serif Khmer","Noto Serif Khojki","Noto Serif Lao","Noto Serif Makasar","Noto Serif Malayalam","Noto Serif Myanmar","Noto Serif NP Hmong","Noto Serif Old Uyghur","Noto Serif Oriya","Noto Serif Ottoman Siyaq","Noto Serif SC","Noto Serif Sinhala","Noto Serif TC","Noto Serif Tamil","Noto Serif Tangut","Noto Serif Telugu","Noto Serif Thai","Noto Serif Tibetan","Noto Serif Todhri","Noto Serif Toto","Noto Serif Vithkuqi","Noto Serif Yezidi","Noto Traditional Nushu","Noto Znamenny Musical Notation","Nova Cut","Nova Flat","Nova Mono","Nova Oval","Nova Round","Nova Script","Nova Slim","Nova Square","Numans","Nunito","Nunito Sans","Nuosu SIL","Odibee Sans","Odor Mean Chey","Offside","Oi","Ojuju","Old Standard TT","Oldenburg","Ole","Oleo Script","Oleo Script Swash Caps","Onest","Oooh Baby","Open Sans","Oranienbaum","Orbit","Orbitron","Oregano","Orelega One","Orienta","Original Surfer","Oswald","Outfit","Over the Rainbow","Overlock","Overlock SC","Overpass","Overpass Mono","Ovo","Oxanium","Oxygen","Oxygen Mono","PT Mono","PT Sans","PT Sans Caption","PT Sans Narrow","PT Serif","PT Serif Caption","Pacifico","Padauk","Padyakke Expanded One","Palanquin","Palanquin Dark","Palette Mosaic","Pangolin","Paprika","Parastoo","Parisienne","Parkinsans","Passero One","Passion One","Passions Conflict","Pathway Extreme","Pathway Gothic One","Patrick Hand","Patrick Hand SC","Pattaya","Patua One","Pavanam","Paytone One","Peddana","Peralta","Permanent Marker","Petemoss","Petit Formal Script","Petrona","Phetsarath","Philosopher","Phudu","Piazzolla","Piedra","Pinyon Script","Pirata One","Pixelify Sans","Plaster","Platypi","Play","Playball","Playfair","Playfair Display","Playfair Display SC","Playpen Sans","Playpen Sans Arabic","Playpen Sans Deva","Playpen Sans Hebrew","Playpen Sans Thai","Playwrite AR","Playwrite AR Guides","Playwrite AT","Playwrite AT Guides","Playwrite AU NSW","Playwrite AU NSW Guides","Playwrite AU QLD","Playwrite AU QLD Guides","Playwrite AU SA","Playwrite AU SA Guides","Playwrite AU TAS","Playwrite AU TAS Guides","Playwrite AU VIC","Playwrite AU VIC Guides","Playwrite BE VLG","Playwrite BE VLG Guides","Playwrite BE WAL","Playwrite BE WAL Guides","Playwrite BR","Playwrite BR Guides","Playwrite CA","Playwrite CA Guides","Playwrite CL","Playwrite CL Guides","Playwrite CO","Playwrite CO Guides","Playwrite CU","Playwrite CU Guides","Playwrite CZ","Playwrite CZ Guides","Playwrite DE Grund","Playwrite DE Grund Guides","Playwrite DE LA","Playwrite DE LA Guides","Playwrite DE SAS","Playwrite DE SAS Guides","Playwrite DE VA","Playwrite DE VA Guides","Playwrite DK Loopet","Playwrite DK Loopet Guides","Playwrite DK Uloopet","Playwrite DK Uloopet Guides","Playwrite ES","Playwrite ES Deco","Playwrite ES Deco Guides","Playwrite ES Guides","Playwrite FR Moderne","Playwrite FR Moderne Guides","Playwrite FR Trad","Playwrite FR Trad Guides","Playwrite GB J","Playwrite GB J Guides","Playwrite GB S","Playwrite GB S Guides","Playwrite HR","Playwrite HR Guides","Playwrite HR Lijeva","Playwrite HR Lijeva Guides","Playwrite HU","Playwrite HU Guides","Playwrite ID","Playwrite ID Guides","Playwrite IE","Playwrite IE Guides","Playwrite IN","Playwrite IN Guides","Playwrite IS","Playwrite IS Guides","Playwrite IT Moderna","Playwrite IT Moderna Guides","Playwrite IT Trad","Playwrite IT Trad Guides","Playwrite MX","Playwrite MX Guides","Playwrite NG Modern","Playwrite NG Modern Guides","Playwrite NL","Playwrite NL Guides","Playwrite NO","Playwrite NO Guides","Playwrite NZ","Playwrite NZ Basic","Playwrite NZ Basic Guides","Playwrite NZ Guides","Playwrite PE","Playwrite PE Guides","Playwrite PL","Playwrite PL Guides","Playwrite PT","Playwrite PT Guides","Playwrite RO","Playwrite RO Guides","Playwrite SK","Playwrite SK Guides","Playwrite TZ","Playwrite TZ Guides","Playwrite US Modern","Playwrite US Modern Guides","Playwrite US Trad","Playwrite US Trad Guides","Playwrite VN","Playwrite VN Guides","Playwrite ZA","Playwrite ZA Guides","Pliant","Plus Jakarta Sans","Pochaevsk","Podkova","Poetsen One","Poiret One","Poller One","Poltawski Nowy","Poly","Pompiere","Ponnala","Ponomar","Pontano Sans","Poor Story","Poppins","Port Lligat Sans","Port Lligat Slab","Potta One","Pragati Narrow","Praise","Prata","Preahvihear","Press Start 2P","Pridi","Princess Sofia","Prociono","Prompt","Prosto One","Protest Guerrilla","Protest Revolution","Protest Riot","Protest Strike","Proza Libre","Public Sans","Puppies Play","Puritan","Purple Purse","Qahiri","Quando","Quantico","Quattrocento","Quattrocento Sans","Questrial","Quicksand","Quintessential","Qwigley","Qwitcher Grypen","REM","Racing Sans One","Radio Canada","Radio Canada Big","Radley","Rajdhani","Rakkas","Raleway","Raleway Dots","Ramabhadra","Ramaraja","Rambla","Rammetto One","Rampart One","Ramsina","Ranchers","Rancho","Ranga","Rasa","Rationale","Ravi Prakash","Readex Pro","Recursive","Red Hat Display","Red Hat Mono","Red Hat Text","Red Rose","Redacted","Redacted Script","Reddit Mono","Reddit Sans","Reddit Sans Condensed","Redressed","Reem Kufi","Reem Kufi Fun","Reem Kufi Ink","Reenie Beanie","Reggae One","Rethink Sans","Revalia","Rhodium Libre","Ribeye","Ribeye Marrow","Righteous","Risque","Road Rage","Roboto","Roboto Condensed","Roboto Flex","Roboto Mono","Roboto Serif","Roboto Slab","Rochester","Rock 3D","Rock Salt","RocknRoll One","Rokkitt","Romanesco","Ropa Sans","Rosario","Rosarivo","Rouge Script","Rowdies","Rozha One","Rubik","Rubik 80s Fade","Rubik Beastly","Rubik Broken Fax","Rubik Bubbles","Rubik Burned","Rubik Dirt","Rubik Distressed","Rubik Doodle Shadow","Rubik Doodle Triangles","Rubik Gemstones","Rubik Glitch","Rubik Glitch Pop","Rubik Iso","Rubik Lines","Rubik Maps","Rubik Marker Hatch","Rubik Maze","Rubik Microbe","Rubik Mono One","Rubik Moonrocks","Rubik Pixels","Rubik Puddles","Rubik Scribble","Rubik Spray Paint","Rubik Storm","Rubik Vinyl","Rubik Wet Paint","Ruda","Rufina","Ruge Boogie","Ruluko","Rum Raisin","Ruslan Display","Russo One","Ruthie","Ruwudu","Rye","SN Pro","STIX Two Math","STIX Two Text","SUSE","SUSE Mono","Sacramento","Sahitya","Sail","Saira","Saira Condensed","Saira Extra Condensed","Saira Semi Condensed","Saira Stencil","Salsa","Sanchez","Sancreek","Sankofa Display","Sansation","Sansita","Sansita Swashed","Sarabun","Sarala","Sarina","Sarpanch","Sassy Frass","Satisfy","Savate","Sawarabi Gothic","Sawarabi Mincho","Scada","Scheherazade New","Schibsted Grotesk","Schoolbell","Science Gothic","Scope One","Scoutie Sans","Seaweed Script","Secular One","Sedan","Sedan SC","Sedgwick Ave","Sedgwick Ave Display","Sekuya","Sen","Send Flowers","Sevillana","Seymour One","Shadows Into Light","Shadows Into Light Two","Shafarik","Shalimar","Shantell Sans","Shanti","Share","Share Tech","Share Tech Mono","Shippori Antique","Shippori Antique B1","Shippori Mincho","Shippori Mincho B1","Shizuru","Shojumaru","Short Stack","Shrikhand","Siemreap","Sigmar","Sigmar One","Signika","Signika Negative","Silkscreen","Simonetta","Single Day","Sintony","Sirin Stencil","Sirivennela","Six Caps","Sixtyfour","Sixtyfour Convergence","Skranji","Slabo 13px","Slabo 27px","Slackey","Slackside One","Smokum","Smooch","Smooch Sans","Smythe","Sniglet","Snippet","Snowburst One","Sofadi One","Sofia","Sofia Sans","Sofia Sans Condensed","Sofia Sans Extra Condensed","Sofia Sans Semi Condensed","Solitreo","Solway","Sometype Mono","Song Myung","Sono","Sonsie One","Sora","Sorts Mill Goudy","Sour Gummy","Source Code Pro","Source Sans 3","Source Serif 4","Space Grotesk","Space Mono","Special Elite","Special Gothic","Special Gothic Condensed One","Special Gothic Expanded One","Spectral","Spectral SC","Spicy Rice","Spinnaker","Spirax","Splash","Spline Sans","Spline Sans Mono","Squada One","Square Peg","Sree Krushnadevaraya","Sriracha","Srisakdi","Staatliches","Stack Sans Headline","Stack Sans Notch","Stack Sans Text","Stalemate","Stalinist One","Stardos Stencil","Stick","Stick No Bills","Stint Ultra Condensed","Stint Ultra Expanded","Stoke","Story Script","Strait","Strichpunkt Sans","Style Script","Stylish","Sue Ellen Francisco","Suez One","Sulphur Point","Sumana","Sunflower","Sunshiney","Supermercado One","Sura","Suranna","Suravaram","Suwannaphum","Swanky and Moo Moo","Syncopate","Syne","Syne Mono","Syne Tactile","TASA Explorer","TASA Orbiter","Tac One","Tagesschrift","Tai Heritage Pro","Tajawal","Tangerine","Tapestry","Taprom","Tauri","Taviraj","Teachers","Teko","Tektur","Telex","Tenali Ramakrishna","Tenor Sans","Text Me One","Texturina","Thasadith","The Girl Next Door","The Nautigal","Tienne","TikTok Sans","Tillana","Tilt Neon","Tilt Prism","Tilt Warp","Timmana","Tinos","Tiny5","Tiro Bangla","Tiro Devanagari Hindi","Tiro Devanagari Marathi","Tiro Devanagari Sanskrit","Tiro Gurmukhi","Tiro Kannada","Tiro Tamil","Tiro Telugu","Tirra","Titan One","Titillium Web","Tomorrow","Tourney","Trade Winds","Train One","Triodion","Trirong","Trispace","Trocchi","Trochut","Truculenta","Trykker","Tsukimi Rounded","Tuffy","Tulpen One","Turret Road","Twinkle Star","Ubuntu","Ubuntu Condensed","Ubuntu Mono","Ubuntu Sans","Ubuntu Sans Mono","Uchen","Ultra","Unbounded","Uncial Antiqua","Underdog","Unica One","UnifrakturCook","UnifrakturMaguntia","Unkempt","Unlock","Unna","UoqMunThenKhung","Updock","Urbanist","VT323","Valley Sans","Vampiro One","Varela","Varela Round","Varta","Vast Shadow","Vazirmatn","Vend Sans","Vesper Libre","Viaoda Libre","Vibes","Vibur","Victor Mono","Vidaloka","Viga","Vina Sans","Voces","Volkhov","Vollkorn","Vollkorn SC","Voltaire","Vujahday Script","WDXL Lubrifont JP N","WDXL Lubrifont SC","WDXL Lubrifont TC","Waiting for the Sunrise","Wallpoet","Walter Turncoat","Warnes","Water Brush","Waterfall","Wavefont","Wellfleet","Wendy One","Whisper","WindSong","Winky Rough","Winky Sans","Wire One","Wittgenstein","Wix Madefor Display","Wix Madefor Text","Work Sans","Workbench","Xanh Mono","Xmind","Yaldevi","Yanone Kaffeesatz","Yantramanav","Yarndings 12","Yarndings 12 Charted","Yarndings 20","Yarndings 20 Charted","Yatra One","Yellowtail","Yeon Sung","Yeseva One","Yesteryear","Yomogi","Young Serif","Yrsa","Ysabeau","Ysabeau Infant","Ysabeau Office","Ysabeau SC","Yuji Boku","Yuji Hentaigana Akari","Yuji Hentaigana Akebono","Yuji Mai","Yuji Syuku","Yusei Magic","Yuyu","Yuyu Short","ZCOOL KuaiLe","ZCOOL QingKe HuangYou","ZCOOL XiaoWei","Zain","Zalando Sans","Zalando Sans Expanded","Zalando Sans SemiExpanded","Zen Antique","Zen Antique Soft","Zen Dots","Zen Kaku Gothic Antique","Zen Kaku Gothic New","Zen Kurenaido","Zen Loop","Zen Maru Gothic","Zen Old Mincho","Zen Tokyo Zoo","Zeyada","Zhi Mang Xing","Zilla Slab","Zilla Slab Highlight"];
+      const fontList = document.querySelector("#font-list");
+      let fontActive = 0;
+      let fontMatches = [];
+
+      function hideFonts() {
+        fontList.hidden = true;
+        typeCustom.setAttribute("aria-expanded", "false");
+      }
+
+      function markFontActive() {
+        fontList.querySelectorAll("[role='option']").forEach((button, index) => {
+          button.setAttribute("aria-selected", index === fontActive ? "true" : "false");
+        });
+      }
+
+      function showFonts() {
+        const query = typeCustom.value.trim().toLowerCase();
+        const all = window.GOOGLE_FONTS || [];
+        const popular = ["Inter", "Roboto", "Open Sans", "Lora", "Playfair Display", "Source Sans 3", "IBM Plex Sans", "Space Grotesk"];
+        fontMatches = query ? all.filter((name) => name.toLowerCase().includes(query)).slice(0, 8) : popular;
+        fontActive = 0;
+        if (!fontMatches.length) {
+          hideFonts();
+          return;
+        }
+        fontList.innerHTML = fontMatches.map((name, index) => {
+          const family = name.replaceAll("'", "");
+          return `<li role="none"><button type="button" role="option" data-font="${escapeHtml(name)}" aria-selected="${index === 0 ? "true" : "false"}" style="font-family:'${family}', sans-serif">${escapeHtml(name)}</button></li>`;
+        }).join("");
+        fontList.hidden = false;
+        typeCustom.setAttribute("aria-expanded", "true");
+        const preview = document.getElementById("consumo-gf-preview") || document.head.appendChild(Object.assign(document.createElement("link"), { id: "consumo-gf-preview", rel: "stylesheet" }));
+        preview.href = `https://fonts.googleapis.com/css2?${fontMatches.map((name) => `family=${encodeURIComponent(name).replace(/%20/g, "+")}`).join("&")}&display=swap`;
+      }
+
+      function chooseFont(name) {
+        typeCustom.value = name;
+        typeTheme = window.consumoType.write({ ...typeTheme, custom: name, family: "custom" });
+        paintTypeEditor(true);
+        hideFonts();
+      }
+
+      fontList.addEventListener("mousedown", (event) => event.preventDefault());
+      fontList.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-font]");
+        if (button) chooseFont(button.dataset.font);
+      });
+
+      typeCustom.addEventListener("focus", showFonts);
+      typeCustom.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowDown") {
+          event.preventDefault();
+          if (fontList.hidden) {
+            showFonts();
+            return;
+          }
+          fontActive = Math.min(fontMatches.length - 1, fontActive + 1);
+          markFontActive();
+        } else if (event.key === "ArrowUp") {
+          event.preventDefault();
+          fontActive = Math.max(0, fontActive - 1);
+          markFontActive();
+        } else if (event.key === "Enter") {
+          const name = fontMatches[fontActive];
+          if (!fontList.hidden && name) {
+            event.preventDefault();
+            chooseFont(name);
+          }
+        } else if (event.key === "Escape") {
+          hideFonts();
+          typeCustom.value = typeTheme.custom;
+        }
+      });
+      typeCustom.addEventListener("blur", () => {
+        const value = typeCustom.value.trim();
+        const exact = (window.GOOGLE_FONTS || []).find((name) => name.toLowerCase() === value.toLowerCase());
+        if (exact) chooseFont(exact);
+        else if (!value) {
+          typeTheme = window.consumoType.write({ ...typeTheme, custom: "", family: "actual" });
+          paintTypeEditor();
+        } else if (value.includes(",")) {
+          typeTheme = window.consumoType.write({ ...typeTheme, custom: value, family: "custom" });
+          paintTypeEditor(true);
+        } else {
+          typeCustom.value = typeTheme.custom;
+        }
+        hideFonts();
+      });
+
+      document.querySelector("#type-reset").addEventListener("click", () => {
+        typeTheme = window.consumoType.reset();
+        paintTypeEditor();
+      });
+
+      paintTypeEditor();
+
+      const saved = readSaved();
+      if (saved) {
+        order = saved.slice();
+        selected = new Set(saved);
+        showBoard();
+        load(true);
+      } else {
+        scanLocal(false);
+      }
+    </script>
+  </body>
+</html>

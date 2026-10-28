@@ -1,0 +1,12 @@
+{
+  "name": "consumo",
+  "private": true,
+  "type": "module",
+  "description": "Panel local del consumo de Cursor, Claude y Codex.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
