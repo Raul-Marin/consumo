@@ -86,8 +86,6 @@ Arriba a la derecha:
 - **theme.** Familia (Actual, Editorial, Sistema, Mono o una de Google Fonts), versión **light** / **dark**, colores y espacio (Compacto, Normal, Amplio, Extendido). **Volver al tema** restaura el aspecto original. El campo vacío de Google Fonts vuelve a la familia de ahora.
 - **ajustes.** Avisos, cada cuánto se refresca, **Cambiar cuentas** y la nota de que las claves no se guardan aquí.
 
-Abajo, el enlace **Shift+R 2026** sale a https://www.shiftr.pro. El panel no es un producto de esa web.
-
 ## Si una tarjeta no carga
 
 - **Cursor.** Abre Cursor e inicia sesión. La sesión se lee de la base local de Cursor (`state.vscdb`), no de un token que tengas que pegar.
