@@ -1,0 +1,63 @@
+{
+  "source": "https://github.com/Raul-Marin/consumo/blob/744c7f334f9bd5b902f6f52b8db2ce3e45dff56c/public/index.html",
+  "defaultVariables": {
+    "canvas": "#f7f7f7",
+    "paper": "#ffffff",
+    "ink": "#26251e",
+    "body": "#5a5852",
+    "muted": "#6b6860",
+    "line": "#e6e5e0",
+    "line-strong": "#cfcdc4",
+    "yellow": "#ffdd00",
+    "yellow-deep": "#e6c700",
+    "on-accent": "#26251e",
+    "ok": "#1f8a65",
+    "warn": "#a15c12",
+    "bad": "#9c3b32",
+    "track": "#eceae4",
+    "dot": "#bebebe",
+    "font": "\"GT Walsheim Medium\", \"Avenir Next\", \"Segoe UI\", sans-serif",
+    "font-bold": "\"GT Walsheim Bold\", \"Avenir Next\", sans-serif",
+    "display": "\"Gooper SemiBold\", Georgia, serif",
+    "pad-card": "18px",
+    "pad-hero-y": "28px",
+    "pad-hero-x": "28px",
+    "gap": "14px",
+    "radius": "18px",
+    "text": "16px",
+    "title": "clamp(40px, 6vw, 64px)",
+    "num": "64px",
+    "shell-top": "28px",
+    "stack": "16px",
+    "leading": "1.5",
+    "tracking": "-0.03em"
+  },
+  "familyOptions": [
+    "actual",
+    "editorial",
+    "sistema",
+    "mono",
+    "custom"
+  ],
+  "densityOptions": [
+    "compact",
+    "normal",
+    "ample",
+    "extended"
+  ],
+  "modes": {
+    "light": {
+      "canvas": "#f7f7f7",
+      "paper": "#ffffff",
+      "ink": "#26251e",
+      "accent": "#ffdd00"
+    },
+    "dark": {
+      "canvas": "#141413",
+      "paper": "#1e1e1b",
+      "ink": "#f4f3ee",
+      "accent": "#ffdd00"
+    }
+  },
+  "notes": "Family and density selectors are preserved in globals.css. Color presets were defined in source JavaScript. The canvas is a static design reference; local accounts and API calls are not connected."
+}
